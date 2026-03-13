@@ -18,7 +18,6 @@
             });
         }
     </script>
-
     <style>
         body { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -46,7 +45,9 @@
             <button onclick="closeModal()" class="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-3xl font-bold leading-none">&times;</button>
             
             <div class="text-center mb-6">
-                <img id="modal-avatar" src="" alt="Avatar" class="w-20 h-20 mx-auto rounded-full bg-blue-100 mb-3 border-4 border-white shadow-sm overflow-hidden">
+                <div class="w-20 h-20 mx-auto rounded-full bg-blue-100 mb-3 border-4 border-white shadow-sm overflow-hidden flex items-center justify-center p-1">
+                    <img id="modal-avatar" src="" alt="Avatar" class="w-full h-full object-contain">
+                </div>
                 <h2 id="modal-name" class="text-2xl font-bold text-gray-800">學生姓名</h2>
                 <p class="text-gray-500 mt-1">目前累積: <span id="modal-points" class="text-blue-600 font-black text-2xl">0</span> 點</p>
             </div>
@@ -122,7 +123,7 @@
                     </label>
                     <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm">
                         <input type="radio" name="reward" value="提早打菜+吃飯一次" class="mr-3 w-5 h-5 accent-green-600">
-                        <span class="flex-1 font-bold text-gray-700 text-sm">10. 提早打菜+吃飯一次</span>
+                        <span class="flex-1 font-bold text-gray-700 text-sm">10.提早打菜+吃飯一次</span>
                     </label>
 
                 </div>
@@ -181,6 +182,7 @@
         // 雲端資料庫網址
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx1mardakIchiA3CCZRvJq6FmEOMQ9uGIh3Y2DXTfr-smItfTjJLJFjGwHP7oh2pxMs/exec";
 
+        // 這裡把預設名字改成只有號碼了！
         const defaultStudents = Array.from({ length: 27 }, (_, i) => ({
             id: i + 1, name: `${i + 1}號`, points: 0, lateDates: [], redeemHistory: [] 
         }));
@@ -196,15 +198,19 @@
             });
         }
 
-        // ★★★ 核心升級：智慧判斷男女生頭像 ★★★
+        // ★★★ 核心升級：動物風頭像 ★★★
+        // 為了確保穩定，我們使用不同的種子來產生 27 種不同的動物
         function getAvatarUrl(id) {
-            if (id <= 13) {
-                // 1~13號 男生：短髮造型
-                return `https://api.dicebear.com/7.x/avataaars/svg?seed=boy${id}&top=shortHairShortFlat,shortHairShortRound,shortHairSides,shortHairTheCaesar`;
-            } else {
-                // 14~27號 女生：長髮、包包頭、短鮑伯造型
-                return `https://api.dicebear.com/7.x/avataaars/svg?seed=girl${id}&top=longHairBob,longHairBun,longHairStraight,longHairCurvy,longHairNotTooLong`;
-            }
+            // 使用 DiceBear 的 pixel-art-duck 或者其他動物風
+            // 為了更穩定且可愛，我們這次選用一個穩定的像素動物網址
+            const animalSeeds = [
+                'pipi','snowball','leo','milo','coco','luna','simba','charlie','oreo','buddy', // 1-10
+                'max','daisy','mimi','bello','kitty','lucky','sparky','rosie','teddy','bear', // 11-20
+                'fox','owl','racoon','deer','squirrel','rabbit','panda' // 21-27
+            ];
+            // 防止 ID 超出陣列範圍
+            const seed = animalSeeds[(id-1) % animalSeeds.length] || `animal${id}`;
+            return `https://api.dicebear.com/7.x/pixel-art-duck/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
         }
 
         async function loadDataFromCloud() {
@@ -249,20 +255,20 @@
             const grid = document.getElementById('student-grid');
             grid.innerHTML = ''; 
             students.forEach(student => {
-                // 取得專屬的男女生頭像
+                // 取得可愛動物頭像
                 const avatarUrl = getAvatarUrl(student.id);
                 
                 if (!student.lateDates) student.lateDates = []; 
                 if (!student.redeemHistory) student.redeemHistory = []; 
                 const warningIcon = student.lateDates.length > 0 ? 
-                    `<span class="absolute -top-1 -left-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow">${student.lateDates.length}</span>` : '';
+                    `<span class="absolute -top-1 -left-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow z-10">${student.lateDates.length}</span>` : '';
                 const card = document.createElement('div');
                 card.className = "bg-white p-3 rounded-2xl shadow-sm cursor-pointer transform transition duration-200 hover:-translate-y-1 hover:shadow-md flex flex-col items-center border border-gray-100 relative overflow-hidden";
                 card.onclick = () => openModal(student.id);
                 card.innerHTML = `
                     ${warningIcon}
-                    <div class="relative w-16 h-16 rounded-full mb-2 bg-gray-100 border-2 border-gray-200 overflow-hidden flex items-end justify-center">
-                        <img src="${avatarUrl}" class="w-16 h-16 object-cover translate-y-1">
+                    <div class="relative w-16 h-16 rounded-full mb-2 bg-blue-100 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center p-1">
+                        <img src="${avatarUrl}" class="w-full h-full object-contain">
                     </div>
                     <h3 class="font-bold text-gray-700 text-sm truncate w-full text-center">${student.name}</h3>
                     <div class="mt-2 bg-blue-50 text-blue-600 px-2 py-1 rounded-lg font-black text-base w-full text-center truncate">
@@ -279,7 +285,7 @@
             document.getElementById('modal-name').innerText = student.name;
             document.getElementById('modal-points').innerText = student.points;
             
-            // 點開卡片後也是顯示專屬的男女生頭像
+            // 點開卡片後也是顯示可愛動物頭像
             document.getElementById('modal-avatar').src = getAvatarUrl(studentId);
             
             document.getElementById('custom-point-input').value = '';
