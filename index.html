@@ -179,10 +179,8 @@
         setInterval(updateClock, 1000);
         updateClock(); 
 
-        // 雲端資料庫網址
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx1mardakIchiA3CCZRvJq6FmEOMQ9uGIh3Y2DXTfr-smItfTjJLJFjGwHP7oh2pxMs/exec";
 
-        // 這裡把預設名字改成只有號碼了！
         const defaultStudents = Array.from({ length: 27 }, (_, i) => ({
             id: i + 1, name: `${i + 1}號`, points: 0, lateDates: [], redeemHistory: [] 
         }));
@@ -198,19 +196,11 @@
             });
         }
 
-        // ★★★ 核心升級：動物風頭像 ★★★
-        // 為了確保穩定，我們使用不同的種子來產生 27 種不同的動物
+        // ★★★ 終極修復：換成超穩定的 Robohash 貓咪產生器 ★★★
+        // 這個 API 不需要複雜的種子陣列，只要給它座號，它就會自動產生不同的超可愛小貓咪！
         function getAvatarUrl(id) {
-            // 使用 DiceBear 的 pixel-art-duck 或者其他動物風
-            // 為了更穩定且可愛，我們這次選用一個穩定的像素動物網址
-            const animalSeeds = [
-                'pipi','snowball','leo','milo','coco','luna','simba','charlie','oreo','buddy', // 1-10
-                'max','daisy','mimi','bello','kitty','lucky','sparky','rosie','teddy','bear', // 11-20
-                'fox','owl','racoon','deer','squirrel','rabbit','panda' // 21-27
-            ];
-            // 防止 ID 超出陣列範圍
-            const seed = animalSeeds[(id-1) % animalSeeds.length] || `animal${id}`;
-            return `https://api.dicebear.com/7.x/pixel-art-duck/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
+            // set=set4 代表專屬的「可愛貓咪」風格，絕對不會破圖
+            return `https://robohash.org/student${id}?set=set4&bgset=bg1&size=150x150`;
         }
 
         async function loadDataFromCloud() {
@@ -255,7 +245,6 @@
             const grid = document.getElementById('student-grid');
             grid.innerHTML = ''; 
             students.forEach(student => {
-                // 取得可愛動物頭像
                 const avatarUrl = getAvatarUrl(student.id);
                 
                 if (!student.lateDates) student.lateDates = []; 
@@ -285,7 +274,6 @@
             document.getElementById('modal-name').innerText = student.name;
             document.getElementById('modal-points').innerText = student.points;
             
-            // 點開卡片後也是顯示可愛動物頭像
             document.getElementById('modal-avatar').src = getAvatarUrl(studentId);
             
             document.getElementById('custom-point-input').value = '';
