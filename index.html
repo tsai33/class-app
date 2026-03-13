@@ -239,7 +239,9 @@
             const grid = document.getElementById('student-grid');
             grid.innerHTML = ''; 
             students.forEach(student => {
-                const avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=student${student.id}`;
+                // ★ 這裡更換了頭像風格：從 bottts 改成了 adventurer ★
+                const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=student${student.id}`;
+                
                 if (!student.lateDates) student.lateDates = []; 
                 if (!student.redeemHistory) student.redeemHistory = []; 
                 const warningIcon = student.lateDates.length > 0 ? 
@@ -266,7 +268,10 @@
             const student = students.find(s => s.id === studentId);
             document.getElementById('modal-name').innerText = student.name;
             document.getElementById('modal-points').innerText = student.points;
-            document.getElementById('modal-avatar').src = `https://api.dicebear.com/7.x/bottts/svg?seed=student${student.id}`;
+            
+            // ★ 點開卡片後的頭像也同步改成 adventurer ★
+            document.getElementById('modal-avatar').src = `https://api.dicebear.com/7.x/adventurer/svg?seed=student${student.id}`;
+            
             document.getElementById('custom-point-input').value = '';
             document.getElementById('redeem-point-input').value = ''; 
             const firstReward = document.querySelector('input[name="reward"]');
