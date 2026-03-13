@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#3b82f6">
+    <meta name="theme-color" content="#fff7ed">
     <link rel="apple-touch-icon" href="icon-192.png">
     <script>
         if ('serviceWorker' in navigator) {
@@ -26,56 +26,56 @@
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-gray-100 p-4 md:p-8 font-sans min-h-screen">
+<body class="bg-orange-50 p-4 md:p-8 font-sans min-h-screen">
 
     <div class="max-w-6xl mx-auto">
-        <div class="bg-white rounded-2xl shadow-sm p-5 md:p-6 mb-8 flex flex-col md:flex-row justify-between items-center border-l-8 border-blue-600 gap-4">
+        <div class="bg-white rounded-3xl shadow-lg p-5 md:p-6 mb-8 flex flex-col md:flex-row justify-between items-center border-l-8 border-orange-400 gap-4">
             <div class="text-center md:text-left w-full md:w-auto">
-                <h1 class="text-2xl md:text-3xl font-black text-blue-800 mb-1">🤖 準時上學大作戰</h1>
+                <h1 class="text-2xl md:text-3xl font-black text-orange-700 mb-1">🍉 準時上學大作戰</h1>
                 <p class="text-sm md:text-base text-gray-600 font-medium" id="today-point-info">讀取中...</p>
             </div>
             <div class="flex items-center gap-2 md:gap-4 w-full md:w-auto justify-between md:justify-end">
-                <button id="btn-random-draw" onclick="randomDraw()" class="flex-1 md:flex-none bg-yellow-400 text-yellow-900 font-bold px-4 py-3 rounded-xl hover:bg-yellow-500 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1">
+                <button id="btn-random-draw" onclick="randomDraw()" class="flex-1 md:flex-none bg-yellow-400 text-yellow-950 font-extrabold px-5 py-3 rounded-xl hover:bg-yellow-500 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1">
                     <span class="text-xl">🎲</span> <span>隨機抽籤</span>
                 </button>
-                <div class="flex-1 md:flex-none bg-blue-50 px-4 py-2 md:py-3 rounded-xl text-center border border-blue-100">
-                    <div id="clock-date" class="text-xs md:text-sm font-bold text-gray-500 mb-0 md:mb-1">YYYY年MM月DD日</div>
-                    <div id="clock-time" class="text-xl md:text-3xl font-black text-blue-600 tracking-wider">00:00:00</div>
+                <div class="flex-1 md:flex-none bg-orange-100 px-4 py-2 md:py-3 rounded-xl text-center border border-orange-200">
+                    <div id="clock-date" class="text-xs md:text-sm font-bold text-gray-500 mb-0 md:mb-1">YYYY/MM/DD</div>
+                    <div id="clock-time" class="text-xl md:text-3xl font-black text-orange-600 tracking-wider">00:00:00</div>
                 </div>
             </div>
         </div>
 
-        <div id="student-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
+        <div id="student-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4 md:gap-5">
             </div>
     </div>
 
     <div id="action-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-5 md:p-6 rounded-2xl shadow-2xl w-full max-w-md relative transform transition-all border border-gray-200">
-            <button onclick="closeModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-4xl font-light leading-none">&times;</button>
+        <div class="bg-white p-6 md:p-7 rounded-3xl shadow-2xl w-full max-w-md relative transform transition-all border border-gray-100">
+            <button onclick="closeModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-5xl font-light leading-none">&times;</button>
             
-            <div class="text-center mb-5">
-                <div class="w-20 h-20 mx-auto rounded-full bg-gray-100 mb-2 border-4 border-white shadow-sm overflow-hidden flex items-center justify-center p-1">
-                    <img id="modal-avatar" src="" alt="Avatar" class="w-full h-full object-contain">
+            <div class="text-center mb-6">
+                <div id="modal-avatar" class="w-24 h-24 mx-auto rounded-full bg-orange-50 mb-2 border-4 border-white shadow-md overflow-hidden flex items-center justify-center text-6xl select-none">
+                    🍎
                 </div>
                 <h2 id="modal-name" class="text-2xl font-bold text-gray-800">學生姓名</h2>
-                <p class="text-gray-500 mt-1">目前累積: <span id="modal-points" class="text-blue-600 font-black text-2xl">0</span> 點</p>
+                <p class="text-gray-500 mt-1">目前累積: <span id="modal-points" class="text-orange-600 font-black text-2xl">0</span> 點</p>
             </div>
 
             <div class="flex border-b mb-5 text-sm overflow-x-auto whitespace-nowrap hide-scrollbar border-gray-200">
-                <button onclick="switchTab('add')" id="tab-add" class="px-3 py-2 border-b-2 border-blue-600 text-blue-600 font-bold transition-colors">考勤/加點</button>
-                <button onclick="switchTab('redeem')" id="tab-redeem" class="px-3 py-2 text-gray-500 font-bold hover:text-blue-600 transition-colors">兌換獎勵</button>
-                <button onclick="switchTab('point-history')" id="tab-point-history" class="px-3 py-2 text-gray-500 font-bold hover:text-blue-600 transition-colors">加點明細</button>
-                <button onclick="switchTab('history')" id="tab-history" class="px-3 py-2 text-gray-500 font-bold hover:text-blue-600 transition-colors">遲到紀錄</button>
-                <button onclick="switchTab('redeem-history')" id="tab-redeem-history" class="px-3 py-2 text-gray-500 font-bold hover:text-blue-600 transition-colors">兌換紀錄</button>
+                <button onclick="switchTab('add')" id="tab-add" class="px-3 py-2 border-b-2 border-orange-500 text-orange-600 font-bold transition-colors">考勤/加點</button>
+                <button onclick="switchTab('redeem')" id="tab-redeem" class="px-3 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換獎勵</button>
+                <button onclick="switchTab('point-history')" id="tab-point-history" class="px-3 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">加點明細</button>
+                <button onclick="switchTab('history')" id="tab-history" class="px-3 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">遲到紀錄</button>
+                <button onclick="switchTab('redeem-history')" id="tab-redeem-history" class="px-3 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換紀錄</button>
             </div>
 
             <div id="section-add" class="space-y-4">
                 <div class="flex gap-3">
-                    <button id="btn-punctual" onclick="quickAdd('punctual')" class="flex-1 bg-green-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-700 active:scale-95 transition-all shadow-sm flex flex-col items-center justify-center">
+                    <button id="btn-punctual" onclick="quickAdd('punctual')" class="flex-1 bg-green-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-600 active:scale-95 transition-all shadow-md flex flex-col items-center justify-center">
                         <span>🌅 準時加點</span>
                         <span id="label-punctual" class="text-sm font-normal opacity-90">+0 點</span>
                     </button>
-                    <button id="btn-late" onclick="quickAdd('late')" class="flex-1 bg-red-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-red-700 active:scale-95 transition-all shadow-sm flex flex-col items-center justify-center">
+                    <button id="btn-late" onclick="quickAdd('late')" class="flex-1 bg-red-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-red-600 active:scale-95 transition-all shadow-md flex flex-col items-center justify-center">
                         <span>🏃 登記遲到</span>
                         <span id="label-late" class="text-sm font-normal opacity-90">-0 點</span>
                     </button>
@@ -86,76 +86,76 @@
                     <div class="flex-grow border-t border-gray-200"></div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input type="number" id="custom-point-input" placeholder="加點輸入正數，扣點輸入負數" class="flex-1 border-2 border-gray-200 p-2.5 rounded-xl focus:outline-none focus:border-blue-400 text-center font-bold text-sm md:text-base bg-gray-50">
-                    <button onclick="submitCustomPoints()" class="bg-gray-800 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-gray-900 active:scale-95 transition-all text-sm">確認</button>
+                    <input type="number" id="custom-point-input" placeholder="加點輸入正數，扣點輸入負數" class="flex-1 border-2 border-gray-200 p-3 rounded-xl focus:outline-none focus:border-orange-400 text-center font-bold text-sm md:text-base bg-gray-50 shadow-inner">
+                    <button onclick="submitCustomPoints()" class="bg-gray-800 text-white px-5 py-3 rounded-xl font-bold hover:bg-gray-900 active:scale-95 transition-all text-sm shadow-sm">確認</button>
                 </div>
             </div>
 
             <div id="section-redeem" class="hidden space-y-3">
                 <div class="h-44 overflow-y-auto border-2 border-gray-200 rounded-xl p-2 space-y-2 bg-gray-50 hide-scrollbar">
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="國語生字少一格" class="mr-3 w-5 h-5 accent-green-600" checked>
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
+                        <input type="radio" name="reward" value="國語生字少一格" class="mr-3 w-5 h-5 accent-orange-500" checked>
                         <span class="flex-1 font-bold text-gray-700 text-sm">1. 國語生字少一格</span>
                     </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="國語生字少兩個" class="mr-3 w-5 h-5 accent-green-600">
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
+                        <input type="radio" name="reward" value="國語生字少兩個" class="mr-3 w-5 h-5 accent-orange-500">
                         <span class="flex-1 font-bold text-gray-700 text-sm">2. 國語生字少兩個</span>
                     </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="國語語詞少一遍" class="mr-3 w-5 h-5 accent-green-600">
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
+                        <input type="radio" name="reward" value="國語語詞少一遍" class="mr-3 w-5 h-5 accent-orange-500">
                         <span class="flex-1 font-bold text-gray-700 text-sm">3. 國語語詞少一遍</span>
                     </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="國語語詞少兩遍" class="mr-3 w-5 h-5 accent-green-600">
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
+                        <input type="radio" name="reward" value="國語語詞少兩遍" class="mr-3 w-5 h-5 accent-orange-500">
                         <span class="flex-1 font-bold text-gray-700 text-sm">4. 國語語詞少兩遍</span>
                     </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="免當值日生一次" class="mr-3 w-5 h-5 accent-green-600">
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
+                        <input type="radio" name="reward" value="免當值日生一次" class="mr-3 w-5 h-5 accent-orange-500">
                         <span class="flex-1 font-bold text-gray-700 text-sm">5. 免當值日生一次</span>
                     </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="免午休一次" class="mr-3 w-5 h-5 accent-green-600">
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
+                        <input type="radio" name="reward" value="免午休一次" class="mr-3 w-5 h-5 accent-orange-500">
                         <span class="flex-1 font-bold text-gray-700 text-sm">6. 免午休一次</span>
                     </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="免抬餐一次" class="mr-3 w-5 h-5 accent-green-600">
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
+                        <input type="radio" name="reward" value="免抬餐一次" class="mr-3 w-5 h-5 accent-orange-500">
                         <span class="flex-1 font-bold text-gray-700 text-sm">7. 免抬餐一次</span>
                     </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="午休時間播放音樂" class="mr-3 w-5 h-5 accent-green-600">
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
+                        <input type="radio" name="reward" value="午休時間播放音樂" class="mr-3 w-5 h-5 accent-orange-500">
                         <span class="flex-1 font-bold text-gray-700 text-sm">8. 午休時間播放音樂</span>
                     </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="兌換文具用品" class="mr-3 w-5 h-5 accent-green-600">
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
+                        <input type="radio" name="reward" value="兌換文具用品" class="mr-3 w-5 h-5 accent-orange-500">
                         <span class="flex-1 font-bold text-gray-700 text-sm">9. 兌換文具用品</span>
                     </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="提早打菜+吃飯一次" class="mr-3 w-5 h-5 accent-green-600">
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
+                        <input type="radio" name="reward" value="提早打菜+吃飯一次" class="mr-3 w-5 h-5 accent-orange-500">
                         <span class="flex-1 font-bold text-gray-700 text-sm">10.提早打菜+吃飯一次</span>
                     </label>
                 </div>
                 <div class="mt-2 flex gap-2">
-                    <input type="number" id="redeem-point-input" placeholder="扣除點數 (如:300)" class="flex-1 border-2 border-gray-200 p-2.5 rounded-xl focus:outline-none focus:border-green-400 font-bold text-gray-700 text-center bg-gray-50">
-                    <button onclick="submitRedemption()" class="bg-green-600 text-white px-4 py-2 rounded-xl font-bold hover:bg-green-700 active:scale-95 transition-all shadow-sm">
+                    <input type="number" id="redeem-point-input" placeholder="扣除點數 (如:300)" class="flex-1 border-2 border-gray-200 p-2.5 rounded-xl focus:outline-none focus:border-green-400 font-bold text-gray-700 text-center bg-gray-50 shadow-inner">
+                    <button onclick="submitRedemption()" class="bg-green-500 text-white px-4 py-2 rounded-xl font-bold hover:bg-green-600 active:scale-95 transition-all shadow-sm">
                         兌換
                     </button>
                 </div>
             </div>
 
             <div id="section-point-history" class="hidden">
-                <div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar">
+                <div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner">
                     <ul id="point-history-list" class="space-y-2"></ul>
                 </div>
             </div>
 
             <div id="section-history" class="hidden">
-                <div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar">
+                <div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner">
                     <ul id="late-history-list" class="space-y-2"></ul>
                 </div>
             </div>
 
             <div id="section-redeem-history" class="hidden">
-                <div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar">
+                <div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner">
                     <ul id="redeem-history-list" class="space-y-2"></ul>
                 </div>
             </div>
@@ -166,6 +166,13 @@
         const dailyPointsMap = { 1: 100, 2: 200, 3: 300, 4: 400, 5: 500, 6: 100, 0: 100 };
         const dayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
         let currentTodayPoints = 0; 
+
+        // 🍎 新增：精選的可愛水果陣列！(保證所有載具都能瞬間顯示不破圖)
+        const fruits = [
+            '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', 
+            '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🥑', '🍏', '🍇', 
+            '🍊', '🍋', '🍉', '🍓', '🍑', '🍍', '🍒', '🥭', '🫐', '🥥'
+        ];
 
         function getFormattedTime() {
             const now = new Date();
@@ -182,7 +189,7 @@
             document.getElementById('clock-time').innerText = now.toLocaleTimeString('zh-TW', { hour12: false });
             document.getElementById('clock-date').innerText = `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()} (${dayNames[dayOfWeek]})`;
             currentTodayPoints = dailyPointsMap[dayOfWeek];
-            document.getElementById('today-point-info').innerText = `✨ 今天準時到校可獲得 ${currentTodayPoints} 點！`;
+            document.getElementById('today-point-info').innerText = `✨ 今天準時可獲得 ${currentTodayPoints} 點！`;
             document.getElementById('label-punctual').innerText = `+${currentTodayPoints} 點`;
             document.getElementById('label-late').innerText = `-${currentTodayPoints} 點`;
         }
@@ -208,8 +215,9 @@
             });
         }
 
-        function getAvatarUrl(id) {
-            return `https://robohash.org/student${id}?set=set1&bgset=bg2&size=150x150`;
+        // 取得對應座號的水果
+        function getFruitEmoji(id) {
+            return fruits[(id - 1) % fruits.length];
         }
 
         async function loadDataFromCloud() {
@@ -218,11 +226,11 @@
                 students = JSON.parse(savedData);
                 cleanStudentNames(); 
                 renderStudents();
-                document.getElementById('today-point-info').innerText = "🔄 正在背景同步雲端最新資料...";
+                document.getElementById('today-point-info').innerText = "🔄 正與雲端資料庫同步...";
             } else {
                 students = defaultStudents;
                 renderStudents();
-                document.getElementById('today-point-info').innerText = "⏳ 初次載入，正在連線 Google 雲端...";
+                document.getElementById('today-point-info').innerText = "⏳ 初次載入，連線雲端資料庫...";
             }
 
             try {
@@ -237,7 +245,7 @@
                 renderStudents(); 
                 updateClock(); 
             } catch (error) {
-                console.log("背景連線失敗，目前顯示本機紀錄");
+                console.log("雲端連線失敗，目前顯示手機本機紀錄");
                 updateClock(); 
             }
         }
@@ -253,23 +261,25 @@
             const grid = document.getElementById('student-grid');
             grid.innerHTML = ''; 
             students.forEach(student => {
-                const avatarUrl = getAvatarUrl(student.id);
-                // ✨ 修復：改為 top-2 left-2 確保在框內，不會被切到
+                const fruitEmoji = getFruitEmoji(student.id);
+                // 紅色遲到標籤
                 const warningIcon = student.lateDates.length > 0 ? 
-                    `<span class="absolute top-2 left-2 bg-red-600 text-white text-xs md:text-sm font-bold px-2 py-0.5 rounded-full shadow-md z-10">${student.lateDates.length}</span>` : '';
+                    `<span class="absolute top-2 left-2 bg-red-500 text-white text-xs md:text-base font-black px-2 py-0.5 rounded-full shadow-lg z-10">${student.lateDates.length}</span>` : '';
                 
                 const card = document.createElement('div');
                 card.id = `student-card-${student.id}`;
-                // ✨ 修復：移除了 overflow-hidden，這樣標籤就不會被裁掉
-                card.className = "bg-white p-2 md:p-3 rounded-2xl shadow-sm cursor-pointer transform transition-all duration-200 hover:-translate-y-1 hover:shadow-md flex flex-col items-center border border-gray-200 relative ring-blue-500";
+                // 質感提升 - 橘色調邊框與Hover效果
+                card.className = "bg-white p-2 md:p-3 rounded-2xl shadow-md cursor-pointer transform transition-all duration-200 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center border border-gray-100 relative ring-orange-400 hover:ring-2 hover:border-orange-200";
                 card.onclick = () => openModal(student.id);
+                
+                // 改用文字大小來顯示巨大的水果 Emoji
                 card.innerHTML = `
                     ${warningIcon}
-                    <div class="relative w-12 h-12 md:w-16 md:h-16 rounded-full mb-1 md:mb-2 bg-gray-100 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center p-1">
-                        <img src="${avatarUrl}" class="w-full h-full object-contain">
+                    <div class="relative w-12 h-12 md:w-20 md:h-20 rounded-full mb-1 md:mb-2 bg-orange-50 border-4 border-white shadow-inner flex items-center justify-center text-3xl md:text-5xl select-none">
+                        ${fruitEmoji}
                     </div>
                     <h3 class="font-bold text-gray-800 text-xs md:text-sm truncate w-full text-center">${student.name}</h3>
-                    <div class="mt-1 md:mt-2 bg-blue-50 text-blue-700 px-1 py-1 rounded-lg font-black text-sm md:text-base w-full text-center truncate border border-blue-100">
+                    <div class="mt-1 md:mt-2 bg-orange-100 text-orange-900 px-1 py-1 rounded-lg font-black text-xs md:text-lg w-full text-center truncate border border-orange-200 shadow-inner">
                         ${student.points}
                     </div>
                 `;
@@ -288,14 +298,14 @@
             const interval = setInterval(() => {
                 students.forEach(s => {
                     const card = document.getElementById(`student-card-${s.id}`);
-                    if (card) card.classList.remove('ring-4', 'scale-110', 'z-20', 'shadow-2xl');
+                    if (card) card.classList.remove('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-2xl');
                 });
                 
                 const rIndex = Math.floor(Math.random() * students.length);
                 const rStudent = students[rIndex];
                 const card = document.getElementById(`student-card-${rStudent.id}`);
                 if (card) {
-                    card.classList.add('ring-4', 'scale-110', 'z-20', 'shadow-2xl');
+                    card.classList.add('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-2xl');
                 }
 
                 times++;
@@ -307,7 +317,7 @@
                     setTimeout(() => {
                         students.forEach(s => {
                             const c = document.getElementById(`student-card-${s.id}`);
-                            if (c) c.classList.remove('ring-4', 'scale-110', 'z-20', 'shadow-2xl');
+                            if (c) c.classList.remove('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-2xl');
                         });
                         openModal(rStudent.id);
                     }, 500); 
@@ -320,7 +330,8 @@
             const student = students.find(s => s.id === studentId);
             document.getElementById('modal-name').innerText = student.name;
             document.getElementById('modal-points').innerText = student.points;
-            document.getElementById('modal-avatar').src = getAvatarUrl(studentId);
+            // 彈出視窗也改成直接寫入文字 Emoji
+            document.getElementById('modal-avatar').innerText = getFruitEmoji(studentId);
             document.getElementById('custom-point-input').value = '';
             document.getElementById('redeem-point-input').value = ''; 
             
@@ -343,11 +354,11 @@
                 const tabEl = document.getElementById(`tab-${s}`);
                 if (s === tab) {
                     secEl.classList.remove('hidden');
-                    tabEl.classList.add('border-b-2', 'border-blue-600', 'text-blue-600');
+                    tabEl.classList.add('border-b-2', 'border-orange-500', 'text-orange-600');
                     tabEl.classList.remove('text-gray-500');
                 } else {
                     secEl.classList.add('hidden');
-                    tabEl.classList.remove('border-b-2', 'border-blue-600', 'text-blue-600');
+                    tabEl.classList.remove('border-b-2', 'border-orange-500', 'text-orange-600');
                     tabEl.classList.add('text-gray-500');
                 }
             });
@@ -361,7 +372,7 @@
                 return;
             }
             [...student.pointHistory].reverse().forEach((recordStr) => {
-                listEl.innerHTML += `<li class="flex items-start text-sm p-2 bg-white rounded border border-blue-100 text-blue-800 mb-1"><span class="mr-2 mt-0.5">➕</span> <span>${recordStr}</span></li>`;
+                listEl.innerHTML += `<li class="flex items-start text-sm p-2 bg-white rounded border border-orange-100 text-orange-800 mb-1"><span class="mr-2 mt-0.5">➕</span> <span>${recordStr}</span></li>`;
             });
         }
 
@@ -369,13 +380,11 @@
             const listEl = document.getElementById('late-history-list');
             listEl.innerHTML = '';
             if (!student.lateDates || student.lateDates.length === 0) {
-                listEl.innerHTML = `<li class="text-center text-green-700 font-bold py-6">✅ 目前沒有遲到紀錄！</li>`;
+                listEl.innerHTML = `<li class="text-center text-green-600 font-bold py-6">✅ 目前沒有遲到紀錄！</li>`;
                 return;
             }
-            // ✨ 加入刪除按鈕功能
             const reversedDates = [...student.lateDates].reverse();
             reversedDates.forEach((dateStr, index) => {
-                // 計算在原陣列中的真實索引
                 const originalIndex = student.lateDates.length - 1 - index;
                 listEl.innerHTML += `
                     <li class="flex items-center justify-between text-sm p-2 bg-white rounded border border-red-100 text-red-700 mb-1">
@@ -385,13 +394,12 @@
             });
         }
 
-        // ✨ 刪除遲到紀錄的專屬函式
         function deleteLateRecord(index) {
             if(confirm("確定要消除這筆遲到紀錄嗎？\n(注意：這不會退還點數，若需退還請使用手動加點)")) {
                 const student = students.find(s => s.id === currentSelectedStudentId);
-                student.lateDates.splice(index, 1); // 刪除該筆紀錄
-                renderHistoryList(student); // 重新繪製列表
-                renderStudents(); // 重新繪製外層卡片(更新左上角數字)
+                student.lateDates.splice(index, 1); 
+                renderHistoryList(student); 
+                renderStudents(); 
                 saveDataToCloud();
             }
         }
