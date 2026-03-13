@@ -18,6 +18,7 @@
             });
         }
     </script>
+
     <style>
         body { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -45,7 +46,7 @@
             <button onclick="closeModal()" class="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-3xl font-bold leading-none">&times;</button>
             
             <div class="text-center mb-6">
-                <img id="modal-avatar" src="" alt="Avatar" class="w-20 h-20 mx-auto rounded-full bg-blue-100 mb-3 border-4 border-white shadow-sm">
+                <img id="modal-avatar" src="" alt="Avatar" class="w-20 h-20 mx-auto rounded-full bg-blue-100 mb-3 border-4 border-white shadow-sm overflow-hidden">
                 <h2 id="modal-name" class="text-2xl font-bold text-gray-800">學生姓名</h2>
                 <p class="text-gray-500 mt-1">目前累積: <span id="modal-points" class="text-blue-600 font-black text-2xl">0</span> 點</p>
             </div>
@@ -180,7 +181,6 @@
         // 雲端資料庫網址
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx1mardakIchiA3CCZRvJq6FmEOMQ9uGIh3Y2DXTfr-smItfTjJLJFjGwHP7oh2pxMs/exec";
 
-        // 這裡把預設名字改成只有號碼了！
         const defaultStudents = Array.from({ length: 27 }, (_, i) => ({
             id: i + 1, name: `${i + 1}號`, points: 0, lateDates: [], redeemHistory: [] 
         }));
@@ -188,7 +188,6 @@
         let students = []; 
         let currentSelectedStudentId = null;
 
-        // 清理名稱的小工具：把「學生」兩個字自動砍掉
         function cleanStudentNames() {
             students.forEach(s => {
                 if (s.name) {
@@ -197,12 +196,23 @@
             });
         }
 
+        // ★★★ 核心升級：智慧判斷男女生頭像 ★★★
+        function getAvatarUrl(id) {
+            if (id <= 13) {
+                // 1~13號 男生：短髮造型
+                return `https://api.dicebear.com/7.x/avataaars/svg?seed=boy${id}&top=shortHairShortFlat,shortHairShortRound,shortHairSides,shortHairTheCaesar`;
+            } else {
+                // 14~27號 女生：長髮、包包頭、短鮑伯造型
+                return `https://api.dicebear.com/7.x/avataaars/svg?seed=girl${id}&top=longHairBob,longHairBun,longHairStraight,longHairCurvy,longHairNotTooLong`;
+            }
+        }
+
         async function loadDataFromCloud() {
             const savedData = localStorage.getItem('classAppStudents');
             
             if (savedData) {
                 students = JSON.parse(savedData);
-                cleanStudentNames(); // 載入記憶時清理名字
+                cleanStudentNames(); 
                 renderStudents();
                 document.getElementById('today-point-info').innerText = "🔄 正在背景同步雲端最新資料...";
             } else {
@@ -216,9 +226,9 @@
                 const data = await response.json();
                 if (data && data.length > 0) {
                     students = data;
-                    cleanStudentNames(); // 從雲端下載時再次清理名字
+                    cleanStudentNames(); 
                     localStorage.setItem('classAppStudents', JSON.stringify(students));
-                    saveDataToCloud(); // 把乾淨的名字蓋回雲端
+                    saveDataToCloud(); 
                 }
                 renderStudents(); 
                 updateClock(); 
@@ -239,20 +249,20 @@
             const grid = document.getElementById('student-grid');
             grid.innerHTML = ''; 
             students.forEach(student => {
-                // ★ 這裡更換了頭像風格：從 bottts 改成了 adventurer ★
-                const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=student${student.id}`;
+                // 取得專屬的男女生頭像
+                const avatarUrl = getAvatarUrl(student.id);
                 
                 if (!student.lateDates) student.lateDates = []; 
                 if (!student.redeemHistory) student.redeemHistory = []; 
                 const warningIcon = student.lateDates.length > 0 ? 
                     `<span class="absolute -top-1 -left-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow">${student.lateDates.length}</span>` : '';
                 const card = document.createElement('div');
-                card.className = "bg-white p-3 rounded-2xl shadow-sm cursor-pointer transform transition duration-200 hover:-translate-y-1 hover:shadow-md flex flex-col items-center border border-gray-100 relative";
+                card.className = "bg-white p-3 rounded-2xl shadow-sm cursor-pointer transform transition duration-200 hover:-translate-y-1 hover:shadow-md flex flex-col items-center border border-gray-100 relative overflow-hidden";
                 card.onclick = () => openModal(student.id);
                 card.innerHTML = `
                     ${warningIcon}
-                    <div class="relative">
-                        <img src="${avatarUrl}" class="w-14 h-14 rounded-full mb-2 bg-blue-50 border-2 border-blue-100">
+                    <div class="relative w-16 h-16 rounded-full mb-2 bg-gray-100 border-2 border-gray-200 overflow-hidden flex items-end justify-center">
+                        <img src="${avatarUrl}" class="w-16 h-16 object-cover translate-y-1">
                     </div>
                     <h3 class="font-bold text-gray-700 text-sm truncate w-full text-center">${student.name}</h3>
                     <div class="mt-2 bg-blue-50 text-blue-600 px-2 py-1 rounded-lg font-black text-base w-full text-center truncate">
@@ -269,8 +279,8 @@
             document.getElementById('modal-name').innerText = student.name;
             document.getElementById('modal-points').innerText = student.points;
             
-            // ★ 點開卡片後的頭像也同步改成 adventurer ★
-            document.getElementById('modal-avatar').src = `https://api.dicebear.com/7.x/adventurer/svg?seed=student${student.id}`;
+            // 點開卡片後也是顯示專屬的男女生頭像
+            document.getElementById('modal-avatar').src = getAvatarUrl(studentId);
             
             document.getElementById('custom-point-input').value = '';
             document.getElementById('redeem-point-input').value = ''; 
