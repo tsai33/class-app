@@ -87,47 +87,38 @@
                         <input type="radio" name="reward" value="國語生字少一格" class="mr-3 w-5 h-5 accent-green-600" checked>
                         <span class="flex-1 font-bold text-gray-700 text-sm">1. 國語生字少一格</span>
                     </label>
-                    
                     <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm">
                         <input type="radio" name="reward" value="國語生字少兩個" class="mr-3 w-5 h-5 accent-green-600">
                         <span class="flex-1 font-bold text-gray-700 text-sm">2. 國語生字少兩個</span>
                     </label>
-                    
                     <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm">
                         <input type="radio" name="reward" value="國語語詞少一遍" class="mr-3 w-5 h-5 accent-green-600">
                         <span class="flex-1 font-bold text-gray-700 text-sm">3. 國語語詞少一遍</span>
                     </label>
-                    
                     <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm">
                         <input type="radio" name="reward" value="國語語詞少兩遍" class="mr-3 w-5 h-5 accent-green-600">
                         <span class="flex-1 font-bold text-gray-700 text-sm">4. 國語語詞少兩遍</span>
                     </label>
-
                     <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm">
                         <input type="radio" name="reward" value="免當值日生一次" class="mr-3 w-5 h-5 accent-green-600">
                         <span class="flex-1 font-bold text-gray-700 text-sm">5. 免當值日生一次</span>
                     </label>
-
                     <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm">
                         <input type="radio" name="reward" value="免午休一次" class="mr-3 w-5 h-5 accent-green-600">
                         <span class="flex-1 font-bold text-gray-700 text-sm">6. 免午休一次</span>
                     </label>
-
                     <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm">
                         <input type="radio" name="reward" value="免抬餐一次" class="mr-3 w-5 h-5 accent-green-600">
                         <span class="flex-1 font-bold text-gray-700 text-sm">7. 免抬餐一次</span>
                     </label>
-
                     <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm">
                         <input type="radio" name="reward" value="午休時間播放音樂" class="mr-3 w-5 h-5 accent-green-600">
                         <span class="flex-1 font-bold text-gray-700 text-sm">8. 午休時間播放音樂</span>
                     </label>
-
                     <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm">
                         <input type="radio" name="reward" value="兌換文具用品" class="mr-3 w-5 h-5 accent-green-600">
                         <span class="flex-1 font-bold text-gray-700 text-sm">9. 兌換文具用品</span>
                     </label>
-
                     <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-green-50 cursor-pointer transition-colors shadow-sm">
                         <input type="radio" name="reward" value="提早打菜+吃飯一次" class="mr-3 w-5 h-5 accent-green-600">
                         <span class="flex-1 font-bold text-gray-700 text-sm">10. 提早打菜+吃飯一次</span>
@@ -189,41 +180,48 @@
         // 雲端資料庫網址
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx1mardakIchiA3CCZRvJq6FmEOMQ9uGIh3Y2DXTfr-smItfTjJLJFjGwHP7oh2pxMs/exec";
 
+        // 這裡把預設名字改成只有號碼了！
         const defaultStudents = Array.from({ length: 27 }, (_, i) => ({
-            id: i + 1, name: `${i + 1}號 學生`, points: 0, lateDates: [], redeemHistory: [] 
+            id: i + 1, name: `${i + 1}號`, points: 0, lateDates: [], redeemHistory: [] 
         }));
 
         let students = []; 
         let currentSelectedStudentId = null;
 
-        // ★ 核心升級：加入瞬間記憶功能 ★
+        // 清理名稱的小工具：把「學生」兩個字自動砍掉
+        function cleanStudentNames() {
+            students.forEach(s => {
+                if (s.name) {
+                    s.name = s.name.replace(' 學生', '').replace('學生', '');
+                }
+            });
+        }
+
         async function loadDataFromCloud() {
-            // 1. 先去電腦記憶體找找看有沒有上次的資料
             const savedData = localStorage.getItem('classAppStudents');
             
             if (savedData) {
-                // 如果有記憶，瞬間把畫面畫出來！
                 students = JSON.parse(savedData);
+                cleanStudentNames(); // 載入記憶時清理名字
                 renderStudents();
                 document.getElementById('today-point-info').innerText = "🔄 正在背景同步雲端最新資料...";
             } else {
-                // 如果是第一次打開，先畫出預設學生
                 students = defaultStudents;
                 renderStudents();
                 document.getElementById('today-point-info').innerText = "⏳ 初次載入，正在連線 Google 雲端...";
             }
 
-            // 2. 畫面出來之後，背景偷偷去跟 Google 要最新的資料
             try {
                 const response = await fetch(GOOGLE_SHEET_API_URL);
                 const data = await response.json();
                 if (data && data.length > 0) {
                     students = data;
-                    // 把最新資料存進電腦記憶體裡，下次打開就會更快！
+                    cleanStudentNames(); // 從雲端下載時再次清理名字
                     localStorage.setItem('classAppStudents', JSON.stringify(students));
+                    saveDataToCloud(); // 把乾淨的名字蓋回雲端
                 }
-                renderStudents(); // 重新畫上最正確的分數
-                updateClock(); // 恢復正常的標題字
+                renderStudents(); 
+                updateClock(); 
             } catch (error) {
                 console.log("背景連線失敗，目前顯示本機紀錄");
                 updateClock(); 
@@ -231,10 +229,7 @@
         }
 
         function saveDataToCloud() {
-            // 儲存時，同時存一份到電腦的記憶體裡
             localStorage.setItem('classAppStudents', JSON.stringify(students));
-            
-            // 傳送到 Google 雲端
             fetch(GOOGLE_SHEET_API_URL, {
                 method: "POST", body: JSON.stringify(students)
             }).catch(err => console.error("雲端儲存失敗", err));
