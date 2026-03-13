@@ -18,14 +18,18 @@
             });
         }
     </script>
-    </head>
+    <style>
+        body { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
 <body class="bg-blue-50 p-8 font-sans min-h-screen">
 
     <div class="max-w-6xl mx-auto">
         <div class="bg-white rounded-2xl shadow-sm p-6 mb-8 flex flex-col md:flex-row justify-between items-center border-l-8 border-blue-500">
             <div class="text-center md:text-left mb-4 md:mb-0">
                 <h1 class="text-3xl font-black text-blue-700 mb-1">⏰ 準時上學大作戰</h1>
-                <p class="text-gray-600 font-medium" id="today-point-info">載入今日點數規則中...</p>
+                <p class="text-gray-600 font-medium" id="today-point-info">讀取中...</p>
             </div>
             <div class="bg-blue-50 px-6 py-3 rounded-xl text-center border border-blue-100">
                 <div id="clock-date" class="text-sm font-bold text-gray-500 mb-1">YYYY年MM月DD日 星期X</div>
@@ -147,7 +151,7 @@
         setInterval(updateClock, 1000);
         updateClock(); 
 
-        // 雲端資料庫網址
+        // 雲端資料庫網址 (請確認這是您的正確網址)
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx1mardakIchiA3CCZRvJq6FmEOMQ9uGIh3Y2DXTfr-smItfTjJLJFjGwHP7oh2pxMs/exec";
 
         const defaultStudents = Array.from({ length: 27 }, (_, i) => ({
@@ -157,25 +161,45 @@
         let students = []; 
         let currentSelectedStudentId = null;
 
+        // ★ 核心升級：加入瞬間記憶功能 ★
         async function loadDataFromCloud() {
-            document.getElementById('today-point-info').innerText = "⏳ 正在與 Google 雲端同步資料中...";
+            // 1. 先去電腦記憶體找找看有沒有上次的資料
+            const savedData = localStorage.getItem('classAppStudents');
+            
+            if (savedData) {
+                // 如果有記憶，瞬間把畫面畫出來！
+                students = JSON.parse(savedData);
+                renderStudents();
+                document.getElementById('today-point-info').innerText = "🔄 正在背景同步雲端最新資料...";
+            } else {
+                // 如果是第一次打開，先畫出預設學生
+                students = defaultStudents;
+                renderStudents();
+                document.getElementById('today-point-info').innerText = "⏳ 初次載入，正在連線 Google 雲端...";
+            }
+
+            // 2. 畫面出來之後，背景偷偷去跟 Google 要最新的資料
             try {
                 const response = await fetch(GOOGLE_SHEET_API_URL);
                 const data = await response.json();
                 if (data && data.length > 0) {
                     students = data;
-                } else {
-                    students = defaultStudents;
-                    saveDataToCloud(); 
+                    // 把最新資料存進電腦記憶體裡，下次打開就會更快！
+                    localStorage.setItem('classAppStudents', JSON.stringify(students));
                 }
-                renderStudents();
-                updateClock(); 
+                renderStudents(); // 重新畫上最正確的分數
+                updateClock(); // 恢復正常的標題字
             } catch (error) {
-                alert("雲端讀取失敗，請檢查網路連線。");
+                console.log("背景連線失敗，目前顯示本機紀錄");
+                updateClock(); 
             }
         }
 
         function saveDataToCloud() {
+            // 儲存時，同時存一份到電腦的記憶體裡
+            localStorage.setItem('classAppStudents', JSON.stringify(students));
+            
+            // 傳送到 Google 雲端
             fetch(GOOGLE_SHEET_API_URL, {
                 method: "POST", body: JSON.stringify(students)
             }).catch(err => console.error("雲端儲存失敗", err));
