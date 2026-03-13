@@ -192,7 +192,6 @@
 
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx1mardakIchiA3CCZRvJq6FmEOMQ9uGIh3Y2DXTfr-smItfTjJLJFjGwHP7oh2pxMs/exec";
 
-        // 資料結構增加 pointHistory (加點紀錄)
         const defaultStudents = Array.from({ length: 27 }, (_, i) => ({
             id: i + 1, name: `${i + 1}號`, points: 0, lateDates: [], redeemHistory: [], pointHistory: [] 
         }));
@@ -203,16 +202,13 @@
         function cleanStudentNames() {
             students.forEach(s => {
                 if (s.name) s.name = s.name.replace(' 學生', '').replace('學生', '');
-                // 確保舊資料也有 pointHistory 陣列
                 if (!s.pointHistory) s.pointHistory = [];
                 if (!s.lateDates) s.lateDates = [];
                 if (!s.redeemHistory) s.redeemHistory = [];
             });
         }
 
-        // ★★★ 核心升級：Robohash 經典機器人 風頭像 ★★★
         function getAvatarUrl(id) {
-            // set=set1 代表專屬的「經典機器人」風格，絕對破圖且帥氣
             return `https://robohash.org/student${id}?set=set1&bgset=bg2&size=150x150`;
         }
 
@@ -258,12 +254,14 @@
             grid.innerHTML = ''; 
             students.forEach(student => {
                 const avatarUrl = getAvatarUrl(student.id);
+                // ✨ 修復：改為 top-2 left-2 確保在框內，不會被切到
                 const warningIcon = student.lateDates.length > 0 ? 
-                    `<span class="absolute -top-1 -left-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow z-10">${student.lateDates.length}</span>` : '';
+                    `<span class="absolute top-2 left-2 bg-red-600 text-white text-xs md:text-sm font-bold px-2 py-0.5 rounded-full shadow-md z-10">${student.lateDates.length}</span>` : '';
                 
                 const card = document.createElement('div');
-                card.id = `student-card-${student.id}`; // 抽籤用的專屬 ID
-                card.className = "bg-white p-2 md:p-3 rounded-2xl shadow-sm cursor-pointer transform transition-all duration-200 hover:-translate-y-1 hover:shadow-md flex flex-col items-center border border-gray-200 relative overflow-hidden ring-blue-500";
+                card.id = `student-card-${student.id}`;
+                // ✨ 修復：移除了 overflow-hidden，這樣標籤就不會被裁掉
+                card.className = "bg-white p-2 md:p-3 rounded-2xl shadow-sm cursor-pointer transform transition-all duration-200 hover:-translate-y-1 hover:shadow-md flex flex-col items-center border border-gray-200 relative ring-blue-500";
                 card.onclick = () => openModal(student.id);
                 card.innerHTML = `
                     ${warningIcon}
@@ -279,7 +277,6 @@
             });
         }
 
-        // 抽籤核心邏輯
         function randomDraw() {
             if (students.length === 0) return;
             const btn = document.getElementById('btn-random-draw');
@@ -287,15 +284,13 @@
             btn.innerHTML = `<span class="text-xl">🎲</span> <span>抽籤中...</span>`;
 
             let times = 0;
-            const maxTimes = 20; // 輪盤閃爍 20 次
+            const maxTimes = 20; 
             const interval = setInterval(() => {
-                // 清除所有人身上的高亮框
                 students.forEach(s => {
                     const card = document.getElementById(`student-card-${s.id}`);
                     if (card) card.classList.remove('ring-4', 'scale-110', 'z-20', 'shadow-2xl');
                 });
                 
-                // 隨機選一個亮起來
                 const rIndex = Math.floor(Math.random() * students.length);
                 const rStudent = students[rIndex];
                 const card = document.getElementById(`student-card-${rStudent.id}`);
@@ -305,11 +300,10 @@
 
                 times++;
                 if (times >= maxTimes) {
-                    clearInterval(interval); // 停止輪盤
+                    clearInterval(interval); 
                     btn.disabled = false;
                     btn.innerHTML = `<span class="text-xl">🎲</span> <span>隨機抽籤</span>`;
                     
-                    // 停留 0.5 秒後打開該學生的視窗
                     setTimeout(() => {
                         students.forEach(s => {
                             const c = document.getElementById(`student-card-${s.id}`);
@@ -318,7 +312,7 @@
                         openModal(rStudent.id);
                     }, 500); 
                 }
-            }, 100); // 每 0.1 秒閃一次
+            }, 100); 
         }
 
         function openModal(studentId) {
@@ -332,7 +326,7 @@
             
             renderHistoryList(student);
             renderRedeemHistoryList(student);
-            renderPointHistoryList(student); // 繪製加點紀錄
+            renderPointHistoryList(student); 
             switchTab('add'); 
             document.getElementById('action-modal').classList.remove('hidden');
         }
@@ -359,7 +353,6 @@
             });
         }
 
-        // 繪製加點紀錄
         function renderPointHistoryList(student) {
             const listEl = document.getElementById('point-history-list');
             listEl.innerHTML = '';
@@ -379,9 +372,28 @@
                 listEl.innerHTML = `<li class="text-center text-green-700 font-bold py-6">✅ 目前沒有遲到紀錄！</li>`;
                 return;
             }
-            [...student.lateDates].reverse().forEach((dateStr) => {
-                listEl.innerHTML += `<li class="flex items-center text-sm p-2 bg-white rounded border border-red-100 text-red-700 mb-1"><span class="mr-2">🏃</span> ${dateStr}</li>`;
+            // ✨ 加入刪除按鈕功能
+            const reversedDates = [...student.lateDates].reverse();
+            reversedDates.forEach((dateStr, index) => {
+                // 計算在原陣列中的真實索引
+                const originalIndex = student.lateDates.length - 1 - index;
+                listEl.innerHTML += `
+                    <li class="flex items-center justify-between text-sm p-2 bg-white rounded border border-red-100 text-red-700 mb-1">
+                        <div class="flex items-center"><span class="mr-2">🏃</span> ${dateStr}</div>
+                        <button onclick="deleteLateRecord(${originalIndex})" class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-bold hover:bg-red-200">消除</button>
+                    </li>`;
             });
+        }
+
+        // ✨ 刪除遲到紀錄的專屬函式
+        function deleteLateRecord(index) {
+            if(confirm("確定要消除這筆遲到紀錄嗎？\n(注意：這不會退還點數，若需退還請使用手動加點)")) {
+                const student = students.find(s => s.id === currentSelectedStudentId);
+                student.lateDates.splice(index, 1); // 刪除該筆紀錄
+                renderHistoryList(student); // 重新繪製列表
+                renderStudents(); // 重新繪製外層卡片(更新左上角數字)
+                saveDataToCloud();
+            }
         }
 
         function renderRedeemHistoryList(student) {
@@ -402,13 +414,11 @@
             
             if (type === 'punctual') {
                 pointsToChange = currentTodayPoints; 
-                // 紀錄加點
                 student.pointHistory.push(`[${getFormattedTime()}] 每日準時到校 (+${currentTodayPoints}點)`);
             } else if (type === 'late') {
                 if(!confirm(`確定要登記 ${student.name}「遲到」，並扣除 ${currentTodayPoints} 點嗎？`)) return; 
                 pointsToChange = -currentTodayPoints; 
                 student.lateDates.push(`[${getFormattedTime()}] 遲到登記`);
-                // 扣點也寫進加點紀錄中方便對帳
                 student.pointHistory.push(`[${getFormattedTime()}] 遲到扣除 (-${currentTodayPoints}點)`);
             }
             updateStudentPoints(currentSelectedStudentId, pointsToChange);
@@ -421,7 +431,6 @@
             
             const student = students.find(s => s.id === currentSelectedStudentId);
             const sign = pointsToAdd >= 0 ? '+' : '';
-            // 紀錄手動調整
             student.pointHistory.push(`[${getFormattedTime()}] 手動特殊調整 (${sign}${pointsToAdd}點)`);
 
             updateStudentPoints(currentSelectedStudentId, pointsToAdd);
@@ -442,8 +451,6 @@
             if (confirm(`確定花費 ${cost} 點兌換「${selectedRadio.value}」嗎？`)) {
                 const timeStr = getFormattedTime();
                 student.redeemHistory.push(`[${timeStr}] 兌換 <b>${selectedRadio.value}</b> (-${cost}點)`);
-                
-                // 兌換也一併寫進點數明細中
                 student.pointHistory.push(`[${timeStr}] 兌換獎勵扣點 (-${cost}點)`);
                 
                 updateStudentPoints(currentSelectedStudentId, -cost); 
