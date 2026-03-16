@@ -3,25 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>準時上學大作戰</title>
+    <title>班級專屬入口網</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#fff7ed">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('APP 背景小幫手註冊成功！'))
-                    .catch(err => console.log('註冊失敗：', err));
-            });
-        }
-    </script>
     <style>
         body { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        /* 隱藏捲軸但保留滑動功能 */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -29,19 +15,25 @@
 <body class="bg-orange-50 p-4 md:p-8 font-sans min-h-screen">
 
     <div class="max-w-6xl mx-auto">
-        <div class="bg-white rounded-3xl shadow-lg p-5 md:p-6 mb-8 flex flex-col md:flex-row justify-between items-center border-l-8 border-orange-400 gap-4">
+        <div class="bg-white rounded-3xl shadow-lg p-4 md:p-6 mb-8 flex flex-col md:flex-row justify-between items-center border-l-8 border-orange-400 gap-4">
             <div class="text-center md:text-left w-full md:w-auto">
-                <h1 class="text-2xl md:text-3xl font-black text-orange-700 mb-1">🍉 準時上學大作戰</h1>
+                <h1 class="text-2xl md:text-3xl font-black text-orange-700 mb-1">🍉 班級大作戰</h1>
                 <p class="text-sm md:text-base text-gray-600 font-medium" id="today-point-info">讀取中...</p>
             </div>
-            <div class="flex items-center gap-2 md:gap-4 w-full md:w-auto justify-between md:justify-end">
-                <button id="btn-random-draw" onclick="randomDraw()" class="flex-1 md:flex-none bg-yellow-400 text-yellow-950 font-extrabold px-5 py-3 rounded-xl hover:bg-yellow-500 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1">
-                    <span class="text-xl">🎲</span> <span>隨機抽籤</span>
+            
+            <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full md:w-auto justify-center md:justify-end">
+                <button onclick="openInfoModal('announcement')" class="flex-1 md:flex-none bg-blue-100 text-blue-700 font-bold px-3 py-3 rounded-xl hover:bg-blue-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1">
+                    <span class="text-lg md:text-xl">📢</span> <span class="text-sm md:text-base">公告</span>
                 </button>
-                <div class="flex-1 md:flex-none bg-orange-100 px-4 py-2 md:py-3 rounded-xl text-center border border-orange-200">
-                    <div id="clock-date" class="text-xs md:text-sm font-bold text-gray-500 mb-0 md:mb-1">YYYY/MM/DD</div>
-                    <div id="clock-time" class="text-xl md:text-3xl font-black text-orange-600 tracking-wider">00:00:00</div>
-                </div>
+                <button onclick="openInfoModal('homework')" class="flex-1 md:flex-none bg-green-100 text-green-700 font-bold px-3 py-3 rounded-xl hover:bg-green-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1">
+                    <span class="text-lg md:text-xl">📖</span> <span class="text-sm md:text-base">聯絡簿</span>
+                </button>
+                <button onclick="openInfoModal('tracking')" class="flex-1 md:flex-none bg-purple-100 text-purple-700 font-bold px-3 py-3 rounded-xl hover:bg-purple-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1">
+                    <span class="text-lg md:text-xl">✅</span> <span class="text-sm md:text-base">作業追蹤</span>
+                </button>
+                <button id="btn-random-draw" onclick="randomDraw()" class="w-full md:w-auto bg-yellow-400 text-yellow-950 font-extrabold px-4 py-3 rounded-xl hover:bg-yellow-500 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1">
+                    <span class="text-xl">🎲</span> <span>抽籤</span>
+                </button>
             </div>
         </div>
 
@@ -49,116 +41,108 @@
             </div>
     </div>
 
-    <div id="action-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-6 md:p-7 rounded-3xl shadow-2xl w-full max-w-md relative transform transition-all border border-gray-100">
-            <button onclick="closeModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-5xl font-light leading-none">&times;</button>
+    <div id="info-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-40 p-2 md:p-4">
+        <div class="bg-white p-4 md:p-6 rounded-3xl shadow-2xl w-full max-w-[95vw] xl:max-w-[90vw] relative transform transition-all border border-gray-100 max-h-[95vh] flex flex-col">
+            <button onclick="closeInfoModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-4xl font-light z-40">&times;</button>
             
-            <div class="text-center mb-6">
-                <div id="modal-avatar" class="w-24 h-24 mx-auto rounded-full bg-orange-50 mb-2 border-4 border-white shadow-md overflow-hidden flex items-center justify-center text-6xl select-none">
-                    🍎
+            <div id="info-content-announcement" class="hidden flex-1 overflow-y-auto hide-scrollbar mt-2 max-w-5xl mx-auto w-full">
+                <div class="flex justify-between items-center mb-4 pr-8">
+                    <h2 class="text-2xl font-black text-blue-700 flex items-center gap-2">📢 班級公告</h2>
+                    <div class="flex gap-2">
+                        <button onclick="openEnlargeModal('announcement')" class="text-sm bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 font-bold transition-colors border border-blue-100 flex items-center gap-1">🔍 <span class="hidden md:inline">放大</span></button>
+                        <button onclick="toggleEditAnnouncement()" id="btn-edit-announcement" class="text-sm bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-200 font-bold transition-colors">✏️ 編輯</button>
+                    </div>
                 </div>
-                <h2 id="modal-name" class="text-2xl font-bold text-gray-800">學生姓名</h2>
-                <p class="text-gray-500 mt-1">目前累積: <span id="modal-points" class="text-orange-600 font-black text-2xl">0</span> 點</p>
+                <div id="announcement-display" class="bg-blue-50 p-4 rounded-xl border border-blue-100 whitespace-pre-wrap text-gray-700 leading-relaxed text-sm md:text-base min-h-[150px]"></div>
+                <textarea id="announcement-editor" class="hidden w-full h-48 border-2 border-blue-200 rounded-xl p-3 focus:outline-none focus:border-blue-400 mb-3 bg-white" placeholder="請輸入班級公告..."></textarea>
+                <button id="btn-save-announcement" onclick="saveAnnouncement()" class="hidden bg-blue-600 text-white px-4 py-3 rounded-xl font-bold w-full hover:bg-blue-700 transition-colors shadow-md">💾 儲存公告</button>
             </div>
 
-            <div class="flex border-b mb-5 text-sm overflow-x-auto whitespace-nowrap hide-scrollbar border-gray-200">
-                <button onclick="switchTab('add')" id="tab-add" class="px-3 py-2 border-b-2 border-orange-500 text-orange-600 font-bold transition-colors">考勤/加點</button>
-                <button onclick="switchTab('redeem')" id="tab-redeem" class="px-3 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換獎勵</button>
-                <button onclick="switchTab('point-history')" id="tab-point-history" class="px-3 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">加點明細</button>
-                <button onclick="switchTab('history')" id="tab-history" class="px-3 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">遲到紀錄</button>
-                <button onclick="switchTab('redeem-history')" id="tab-redeem-history" class="px-3 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換紀錄</button>
+            <div id="info-content-homework" class="hidden flex-1 overflow-y-auto hide-scrollbar flex-col mt-2 max-w-5xl mx-auto w-full">
+                <div class="flex justify-between items-center mb-4 pr-8">
+                    <h2 class="text-2xl font-black text-green-700 flex items-center gap-2">📖 聯絡簿紀錄</h2>
+                    <button onclick="showAddContactBook()" class="text-sm bg-green-100 text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-200 font-bold transition-colors">➕ 新增今日</button>
+                </div>
+                
+                <div id="contact-book-editor" class="hidden mb-5 bg-green-50 p-4 rounded-xl border-2 border-green-200 shadow-inner">
+                    <div class="font-bold text-green-800 mb-2 flex justify-between">
+                        <span id="contact-book-today-date" class="text-lg">今日日期</span>
+                    </div>
+                    <textarea id="contact-book-textarea" placeholder="國語：甲本 P.1~P.3&#10;數學：習作 P.5&#10;(每一行都會自動變成作業追蹤項目喔！)" class="w-full h-32 border border-green-200 rounded-lg p-3 mt-2 mb-4 focus:outline-none focus:border-green-400 bg-white leading-relaxed text-base"></textarea>
+                    <div class="flex gap-2">
+                        <button onclick="saveContactBook()" class="flex-1 bg-green-600 text-white py-2.5 rounded-lg font-bold hover:bg-green-700 shadow-sm text-lg">發布</button>
+                        <button onclick="hideAddContactBook()" class="flex-1 bg-gray-300 text-gray-700 py-2.5 rounded-lg font-bold hover:bg-gray-400 text-lg">取消</button>
+                    </div>
+                </div>
+
+                <div id="contact-book-list" class="space-y-4 pb-4"></div>
             </div>
 
+            <div id="info-content-tracking" class="hidden flex-col h-full mt-2 w-full">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-3 pr-8 shrink-0">
+                    <h2 class="text-2xl font-black text-purple-700 flex items-center gap-2">✅ 作業追蹤 (全景模式)</h2>
+                    <select id="tracking-date-select" onchange="renderTracking()" class="w-full md:w-64 border-2 border-purple-200 bg-purple-50 text-purple-800 rounded-xl p-2 font-bold focus:outline-none focus:border-purple-400 cursor-pointer"></select>
+                </div>
+
+                <div id="tracking-tables-container" class="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="enlarge-modal" class="fixed inset-0 z-50 hidden flex-col transition-colors duration-300">
+        <div id="enlarge-header" class="flex justify-between items-center p-4 md:p-6 text-white shadow-lg">
+            <h2 id="enlarge-title" class="text-2xl md:text-5xl font-black tracking-wider drop-shadow-md">標題</h2>
+            <button onclick="closeEnlargeModal()" class="text-white hover:opacity-75 text-4xl md:text-6xl font-light leading-none px-4">&times;</button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 md:p-12 lg:p-16 flex justify-center items-start">
+            <div id="enlarge-box" class="w-full max-w-5xl bg-white p-6 md:p-12 rounded-3xl shadow-xl border-4 mt-2 md:mt-8">
+                <div id="enlarge-content" class="text-3xl md:text-5xl lg:text-6xl text-gray-800 whitespace-pre-wrap leading-relaxed md:leading-[1.8] font-bold"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="action-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-40 p-4">
+        <div class="bg-white p-5 md:p-7 rounded-3xl shadow-2xl w-full max-w-md relative transform transition-all border border-gray-100">
+            <button onclick="closeModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-5xl font-light leading-none">&times;</button>
+            <div class="text-center mb-5">
+                <div id="modal-avatar" class="w-20 h-20 md:w-24 md:h-24 mx-auto rounded-full bg-orange-50 mb-2 border-4 border-white shadow-md flex items-center justify-center text-5xl md:text-6xl select-none">🍎</div>
+                <h2 id="modal-name" class="text-xl md:text-2xl font-bold text-gray-800">學生姓名</h2>
+                <p class="text-gray-500 text-sm md:text-base mt-1">累積: <span id="modal-points" class="text-orange-600 font-black text-xl md:text-2xl">0</span> 點</p>
+            </div>
+            <div class="flex border-b mb-4 text-xs md:text-sm overflow-x-auto whitespace-nowrap hide-scrollbar border-gray-200">
+                <button onclick="switchTab('add')" id="tab-add" class="px-2 py-2 border-b-2 border-orange-500 text-orange-600 font-bold transition-colors">加扣點</button>
+                <button onclick="switchTab('redeem')" id="tab-redeem" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換獎勵</button>
+                <button onclick="switchTab('point-history')" id="tab-point-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">加扣紀錄</button>
+                <button onclick="switchTab('history')" id="tab-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">遲到紀錄</button>
+                <button onclick="switchTab('redeem-history')" id="tab-redeem-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換紀錄</button>
+            </div>
             <div id="section-add" class="space-y-4">
-                <div class="flex gap-3">
-                    <button id="btn-punctual" onclick="quickAdd('punctual')" class="flex-1 bg-green-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-600 active:scale-95 transition-all shadow-md flex flex-col items-center justify-center">
-                        <span>🌅 準時加點</span>
-                        <span id="label-punctual" class="text-sm font-normal opacity-90">+0 點</span>
-                    </button>
-                    <button id="btn-late" onclick="quickAdd('late')" class="flex-1 bg-red-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-red-600 active:scale-95 transition-all shadow-md flex flex-col items-center justify-center">
-                        <span>🏃 登記遲到</span>
-                        <span id="label-late" class="text-sm font-normal opacity-90">-0 點</span>
-                    </button>
+                <div class="flex gap-2 md:gap-3">
+                    <button id="btn-punctual" onclick="quickAdd('punctual')" class="flex-1 bg-green-500 text-white py-3 md:py-4 rounded-xl font-bold md:text-lg hover:bg-green-600 active:scale-95 transition-all shadow-md flex flex-col items-center justify-center"><span>🌅 準時加點</span><span id="label-punctual" class="text-xs font-normal opacity-90">+0 點</span></button>
+                    <button id="btn-late" onclick="quickAdd('late')" class="flex-1 bg-red-500 text-white py-3 md:py-4 rounded-xl font-bold md:text-lg hover:bg-red-600 active:scale-95 transition-all shadow-md flex flex-col items-center justify-center"><span>🏃 登記遲到</span><span id="label-late" class="text-xs font-normal opacity-90">-0 點</span></button>
                 </div>
-                <div class="relative flex items-center py-2">
-                    <div class="flex-grow border-t border-gray-200"></div>
-                    <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">手動特殊調整</span>
-                    <div class="flex-grow border-t border-gray-200"></div>
-                </div>
+                <div class="relative flex items-center py-1"><div class="flex-grow border-t border-gray-200"></div><span class="flex-shrink-0 mx-4 text-gray-400 text-xs">手動特殊調整</span><div class="flex-grow border-t border-gray-200"></div></div>
                 <div class="flex items-center gap-2">
-                    <input type="number" id="custom-point-input" placeholder="加點輸入正數，扣點輸入負數" class="flex-1 border-2 border-gray-200 p-3 rounded-xl focus:outline-none focus:border-orange-400 text-center font-bold text-sm md:text-base bg-gray-50 shadow-inner">
-                    <button onclick="submitCustomPoints()" class="bg-gray-800 text-white px-5 py-3 rounded-xl font-bold hover:bg-gray-900 active:scale-95 transition-all text-sm shadow-sm">確認</button>
+                    <input type="number" id="custom-point-input" placeholder="正數加點，負數扣點" class="flex-1 border-2 border-gray-200 p-2.5 rounded-xl focus:outline-none focus:border-orange-400 text-center font-bold text-sm md:text-base bg-gray-50 shadow-inner">
+                    <button onclick="submitCustomPoints()" class="bg-gray-800 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-gray-900 active:scale-95 transition-all text-sm shadow-sm">確認</button>
                 </div>
             </div>
-
             <div id="section-redeem" class="hidden space-y-3">
                 <div class="h-44 overflow-y-auto border-2 border-gray-200 rounded-xl p-2 space-y-2 bg-gray-50 hide-scrollbar">
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="國語生字少一格" class="mr-3 w-5 h-5 accent-orange-500" checked>
-                        <span class="flex-1 font-bold text-gray-700 text-sm">1. 國語生字少一格</span>
-                    </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="國語生字少兩個" class="mr-3 w-5 h-5 accent-orange-500">
-                        <span class="flex-1 font-bold text-gray-700 text-sm">2. 國語生字少兩個</span>
-                    </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="國語語詞少一遍" class="mr-3 w-5 h-5 accent-orange-500">
-                        <span class="flex-1 font-bold text-gray-700 text-sm">3. 國語語詞少一遍</span>
-                    </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="國語語詞少兩遍" class="mr-3 w-5 h-5 accent-orange-500">
-                        <span class="flex-1 font-bold text-gray-700 text-sm">4. 國語語詞少兩遍</span>
-                    </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="免當值日生一次" class="mr-3 w-5 h-5 accent-orange-500">
-                        <span class="flex-1 font-bold text-gray-700 text-sm">5. 免當值日生一次</span>
-                    </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="免午休一次" class="mr-3 w-5 h-5 accent-orange-500">
-                        <span class="flex-1 font-bold text-gray-700 text-sm">6. 免午休一次</span>
-                    </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="免抬餐一次" class="mr-3 w-5 h-5 accent-orange-500">
-                        <span class="flex-1 font-bold text-gray-700 text-sm">7. 免抬餐一次</span>
-                    </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="午休時間播放音樂" class="mr-3 w-5 h-5 accent-orange-500">
-                        <span class="flex-1 font-bold text-gray-700 text-sm">8. 午休時間播放音樂</span>
-                    </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="兌換文具用品" class="mr-3 w-5 h-5 accent-orange-500">
-                        <span class="flex-1 font-bold text-gray-700 text-sm">9. 兌換文具用品</span>
-                    </label>
-                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer transition-colors shadow-sm border-gray-100">
-                        <input type="radio" name="reward" value="提早打菜+吃飯一次" class="mr-3 w-5 h-5 accent-orange-500">
-                        <span class="flex-1 font-bold text-gray-700 text-sm">10.提早打菜+吃飯一次</span>
-                    </label>
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer shadow-sm"><input type="radio" name="reward" value="國語生字少一格" class="mr-3 w-5 h-5 accent-orange-500" checked><span class="flex-1 font-bold text-gray-700 text-sm">1. 國語生字少一格</span></label>
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer shadow-sm"><input type="radio" name="reward" value="國語生字少兩個" class="mr-3 w-5 h-5 accent-orange-500"><span class="flex-1 font-bold text-gray-700 text-sm">2. 國語生字少兩個</span></label>
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer shadow-sm"><input type="radio" name="reward" value="免當值日生一次" class="mr-3 w-5 h-5 accent-orange-500"><span class="flex-1 font-bold text-gray-700 text-sm">3. 免當值日生一次</span></label>
+                    <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer shadow-sm"><input type="radio" name="reward" value="免午休一次" class="mr-3 w-5 h-5 accent-orange-500"><span class="flex-1 font-bold text-gray-700 text-sm">4. 免午休一次</span></label>
                 </div>
                 <div class="mt-2 flex gap-2">
-                    <input type="number" id="redeem-point-input" placeholder="扣除點數 (如:300)" class="flex-1 border-2 border-gray-200 p-2.5 rounded-xl focus:outline-none focus:border-green-400 font-bold text-gray-700 text-center bg-gray-50 shadow-inner">
-                    <button onclick="submitRedemption()" class="bg-green-500 text-white px-4 py-2 rounded-xl font-bold hover:bg-green-600 active:scale-95 transition-all shadow-sm">
-                        兌換
-                    </button>
+                    <input type="number" id="redeem-point-input" placeholder="扣除點數" class="flex-1 border-2 border-gray-200 p-2 rounded-xl focus:outline-none focus:border-green-400 font-bold text-center bg-gray-50 shadow-inner">
+                    <button onclick="submitRedemption()" class="bg-green-500 text-white px-4 py-2 rounded-xl font-bold shadow-sm">兌換</button>
                 </div>
             </div>
-
-            <div id="section-point-history" class="hidden">
-                <div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner">
-                    <ul id="point-history-list" class="space-y-2"></ul>
-                </div>
-            </div>
-
-            <div id="section-history" class="hidden">
-                <div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner">
-                    <ul id="late-history-list" class="space-y-2"></ul>
-                </div>
-            </div>
-
-            <div id="section-redeem-history" class="hidden">
-                <div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner">
-                    <ul id="redeem-history-list" class="space-y-2"></ul>
-                </div>
-            </div>
+            <div id="section-point-history" class="hidden"><div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner"><ul id="point-history-list" class="space-y-2"></ul></div></div>
+            <div id="section-history" class="hidden"><div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner"><ul id="late-history-list" class="space-y-2"></ul></div></div>
+            <div id="section-redeem-history" class="hidden"><div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner"><ul id="redeem-history-list" class="space-y-2"></ul></div></div>
         </div>
     </div>
 
@@ -166,44 +150,37 @@
         const dailyPointsMap = { 1: 100, 2: 200, 3: 300, 4: 400, 5: 500, 6: 100, 0: 100 };
         const dayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
         let currentTodayPoints = 0; 
+        const fruits = ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🥑', '🍏', '🍇', '🍊', '🍋', '🍉', '🍓', '🍑', '🍍', '🍒', '🥭', '🫐', '🥥'];
 
-        // 🍎 新增：精選的可愛水果陣列！(保證所有載具都能瞬間顯示不破圖)
-        const fruits = [
-            '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', 
-            '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🥑', '🍏', '🍇', 
-            '🍊', '🍋', '🍉', '🍓', '🍑', '🍍', '🍒', '🥭', '🫐', '🥥'
-        ];
+        const HW_STATUSES = ['缺交', '已交', '訂正', '完成'];
+        const HW_COLORS = {
+            '缺交': 'bg-red-100 text-red-700 border-red-300 shadow-inner',
+            '已交': 'bg-green-100 text-green-700 border-green-300 shadow-sm',
+            '訂正': 'bg-yellow-100 text-yellow-700 border-yellow-300 shadow-sm',
+            '完成': 'bg-blue-100 text-blue-700 border-blue-300 shadow-sm'
+        };
 
-        function getFormattedTime() {
-            const now = new Date();
-            const mm = (now.getMonth() + 1).toString().padStart(2, '0');
-            const dd = now.getDate().toString().padStart(2, '0');
-            const hh = now.getHours().toString().padStart(2, '0');
-            const min = now.getMinutes().toString().padStart(2, '0');
-            return `${mm}/${dd} ${hh}:${min}`;
-        }
+        let appAnnouncement = localStorage.getItem('classAppAnnouncement') || "🌟 歡迎來到班級專屬入口網！";
+        let appContactBook = JSON.parse(localStorage.getItem('classAppContactBook')) || [];
+        
+        let currentTrackingDate = '';
+        let currentTrackingTasks = [];
+
+        function getFruitEmoji(id) { return fruits[(id - 1) % fruits.length]; }
+        function getFormattedTime() { const now = new Date(); return `${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`; }
+        function getTodayDateString() { const now = new Date(); return `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')} (${dayNames[now.getDay()]})`; }
 
         function updateClock() {
-            const now = new Date();
-            const dayOfWeek = now.getDay();
-            document.getElementById('clock-time').innerText = now.toLocaleTimeString('zh-TW', { hour12: false });
-            document.getElementById('clock-date').innerText = `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()} (${dayNames[dayOfWeek]})`;
+            const now = new Date(); const dayOfWeek = now.getDay();
             currentTodayPoints = dailyPointsMap[dayOfWeek];
             document.getElementById('today-point-info').innerText = `✨ 今天準時可獲得 ${currentTodayPoints} 點！`;
-            document.getElementById('label-punctual').innerText = `+${currentTodayPoints} 點`;
-            document.getElementById('label-late').innerText = `-${currentTodayPoints} 點`;
+            if(document.getElementById('label-punctual')) document.getElementById('label-punctual').innerText = `+${currentTodayPoints} 點`;
+            if(document.getElementById('label-late')) document.getElementById('label-late').innerText = `-${currentTodayPoints} 點`;
         }
-        
-        setInterval(updateClock, 1000);
-        updateClock(); 
+        setInterval(updateClock, 1000); updateClock(); 
 
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx1mardakIchiA3CCZRvJq6FmEOMQ9uGIh3Y2DXTfr-smItfTjJLJFjGwHP7oh2pxMs/exec";
-
-        const defaultStudents = Array.from({ length: 27 }, (_, i) => ({
-            id: i + 1, name: `${i + 1}號`, points: 0, lateDates: [], redeemHistory: [], pointHistory: [] 
-        }));
-
-        let students = []; 
+        let students = Array.from({ length: 27 }, (_, i) => ({ id: i + 1, name: `${i + 1}號`, points: 0, lateDates: [], redeemHistory: [], pointHistory: [], homework: {} }));
         let currentSelectedStudentId = null;
 
         function cleanStudentNames() {
@@ -212,270 +189,367 @@
                 if (!s.pointHistory) s.pointHistory = [];
                 if (!s.lateDates) s.lateDates = [];
                 if (!s.redeemHistory) s.redeemHistory = [];
+                if (!s.homework) s.homework = {}; 
             });
-        }
-
-        // 取得對應座號的水果
-        function getFruitEmoji(id) {
-            return fruits[(id - 1) % fruits.length];
         }
 
         async function loadDataFromCloud() {
             const savedData = localStorage.getItem('classAppStudents');
-            if (savedData) {
-                students = JSON.parse(savedData);
-                cleanStudentNames(); 
-                renderStudents();
-                document.getElementById('today-point-info').innerText = "🔄 正與雲端資料庫同步...";
-            } else {
-                students = defaultStudents;
-                renderStudents();
-                document.getElementById('today-point-info').innerText = "⏳ 初次載入，連線雲端資料庫...";
-            }
-
+            if (savedData) { students = JSON.parse(savedData); cleanStudentNames(); renderStudents(); }
+            renderAnnouncement(); renderContactBookList(); 
             try {
                 const response = await fetch(GOOGLE_SHEET_API_URL);
                 const data = await response.json();
                 if (data && data.length > 0) {
-                    students = data;
-                    cleanStudentNames(); 
-                    localStorage.setItem('classAppStudents', JSON.stringify(students));
-                    saveDataToCloud(); 
+                    students = data; cleanStudentNames();
+                    localStorage.setItem('classAppStudents', JSON.stringify(students)); saveDataToCloud(); 
                 }
                 renderStudents(); 
-                updateClock(); 
-            } catch (error) {
-                console.log("雲端連線失敗，目前顯示手機本機紀錄");
-                updateClock(); 
-            }
+            } catch (error) { console.log("雲端連線失敗"); }
         }
 
         function saveDataToCloud() {
             localStorage.setItem('classAppStudents', JSON.stringify(students));
-            fetch(GOOGLE_SHEET_API_URL, {
-                method: "POST", body: JSON.stringify(students)
-            }).catch(err => console.error("雲端儲存失敗", err));
+            fetch(GOOGLE_SHEET_API_URL, { method: "POST", body: JSON.stringify(students) }).catch(err => console.error(err));
         }
 
         function renderStudents() {
-            const grid = document.getElementById('student-grid');
-            grid.innerHTML = ''; 
+            const grid = document.getElementById('student-grid'); grid.innerHTML = ''; 
             students.forEach(student => {
-                const fruitEmoji = getFruitEmoji(student.id);
-                // 紅色遲到標籤
-                const warningIcon = student.lateDates.length > 0 ? 
-                    `<span class="absolute top-2 left-2 bg-red-500 text-white text-xs md:text-base font-black px-2 py-0.5 rounded-full shadow-lg z-10">${student.lateDates.length}</span>` : '';
-                
-                const card = document.createElement('div');
-                card.id = `student-card-${student.id}`;
-                // 質感提升 - 橘色調邊框與Hover效果
-                card.className = "bg-white p-2 md:p-3 rounded-2xl shadow-md cursor-pointer transform transition-all duration-200 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center border border-gray-100 relative ring-orange-400 hover:ring-2 hover:border-orange-200";
+                const warningIcon = student.lateDates.length > 0 ? `<span class="absolute top-1 left-1 md:top-2 md:left-2 bg-red-500 text-white text-xs md:text-sm font-black px-2 py-0.5 rounded-full shadow-lg z-10">${student.lateDates.length}</span>` : '';
+                const card = document.createElement('div'); card.id = `student-card-${student.id}`;
+                card.className = "bg-white p-2 md:p-3 rounded-2xl shadow-md cursor-pointer transform transition-all hover:-translate-y-1 flex flex-col items-center border border-gray-100 relative ring-orange-400 hover:ring-2 hover:border-orange-200";
                 card.onclick = () => openModal(student.id);
-                
-                // 改用文字大小來顯示巨大的水果 Emoji
-                card.innerHTML = `
-                    ${warningIcon}
-                    <div class="relative w-12 h-12 md:w-20 md:h-20 rounded-full mb-1 md:mb-2 bg-orange-50 border-4 border-white shadow-inner flex items-center justify-center text-3xl md:text-5xl select-none">
-                        ${fruitEmoji}
-                    </div>
-                    <h3 class="font-bold text-gray-800 text-xs md:text-sm truncate w-full text-center">${student.name}</h3>
-                    <div class="mt-1 md:mt-2 bg-orange-100 text-orange-900 px-1 py-1 rounded-lg font-black text-xs md:text-lg w-full text-center truncate border border-orange-200 shadow-inner">
-                        ${student.points}
-                    </div>
-                `;
+                card.innerHTML = `${warningIcon}<div class="relative w-12 h-12 md:w-16 md:h-16 rounded-full mb-1 bg-orange-50 border-2 md:border-4 border-white shadow-inner flex items-center justify-center text-3xl md:text-4xl select-none">${getFruitEmoji(student.id)}</div><h3 class="font-bold text-gray-800 text-xs md:text-sm truncate w-full text-center">${student.name}</h3><div class="mt-1 bg-orange-100 text-orange-900 px-1 py-0.5 md:py-1 rounded-lg font-black text-xs md:text-sm w-full text-center border border-orange-200 shadow-inner">${student.points}</div>`;
                 grid.appendChild(card);
             });
         }
 
         function randomDraw() {
             if (students.length === 0) return;
-            const btn = document.getElementById('btn-random-draw');
-            btn.disabled = true;
-            btn.innerHTML = `<span class="text-xl">🎲</span> <span>抽籤中...</span>`;
-
-            let times = 0;
-            const maxTimes = 20; 
+            const btn = document.getElementById('btn-random-draw'); btn.disabled = true; btn.innerHTML = `<span class="text-xl">🎲</span> <span>抽籤中...</span>`;
+            let times = 0; const maxTimes = 15; 
             const interval = setInterval(() => {
-                students.forEach(s => {
-                    const card = document.getElementById(`student-card-${s.id}`);
-                    if (card) card.classList.remove('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-2xl');
-                });
-                
-                const rIndex = Math.floor(Math.random() * students.length);
-                const rStudent = students[rIndex];
-                const card = document.getElementById(`student-card-${rStudent.id}`);
-                if (card) {
-                    card.classList.add('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-2xl');
-                }
-
+                students.forEach(s => document.getElementById(`student-card-${s.id}`)?.classList.remove('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-xl'));
+                const rStudent = students[Math.floor(Math.random() * students.length)];
+                document.getElementById(`student-card-${rStudent.id}`)?.classList.add('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-xl');
                 times++;
                 if (times >= maxTimes) {
-                    clearInterval(interval); 
-                    btn.disabled = false;
-                    btn.innerHTML = `<span class="text-xl">🎲</span> <span>隨機抽籤</span>`;
-                    
-                    setTimeout(() => {
-                        students.forEach(s => {
-                            const c = document.getElementById(`student-card-${s.id}`);
-                            if (c) c.classList.remove('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-2xl');
-                        });
-                        openModal(rStudent.id);
-                    }, 500); 
+                    clearInterval(interval); btn.disabled = false; btn.innerHTML = `<span class="text-xl">🎲</span> <span>抽籤</span>`;
+                    setTimeout(() => { students.forEach(s => document.getElementById(`student-card-${s.id}`)?.classList.remove('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-xl')); openModal(rStudent.id); }, 500); 
                 }
             }, 100); 
         }
 
-        function openModal(studentId) {
-            currentSelectedStudentId = studentId;
-            const student = students.find(s => s.id === studentId);
-            document.getElementById('modal-name').innerText = student.name;
-            document.getElementById('modal-points').innerText = student.points;
-            // 彈出視窗也改成直接寫入文字 Emoji
-            document.getElementById('modal-avatar').innerText = getFruitEmoji(studentId);
-            document.getElementById('custom-point-input').value = '';
-            document.getElementById('redeem-point-input').value = ''; 
-            
-            renderHistoryList(student);
-            renderRedeemHistoryList(student);
-            renderPointHistoryList(student); 
-            switchTab('add'); 
-            document.getElementById('action-modal').classList.remove('hidden');
+        // ==========================================
+        // 📢 公告 & 📖 聯絡簿
+        // ==========================================
+        function renderAnnouncement() { document.getElementById('announcement-display').innerText = appAnnouncement; }
+        function toggleEditAnnouncement() {
+            const display = document.getElementById('announcement-display'); const editor = document.getElementById('announcement-editor');
+            const btnSave = document.getElementById('btn-save-announcement'); const btnEdit = document.getElementById('btn-edit-announcement');
+            editor.value = appAnnouncement; display.classList.add('hidden'); btnEdit.classList.add('hidden');
+            editor.classList.remove('hidden'); btnSave.classList.remove('hidden');
+        }
+        function saveAnnouncement() {
+            appAnnouncement = document.getElementById('announcement-editor').value; localStorage.setItem('classAppAnnouncement', appAnnouncement);
+            document.getElementById('announcement-display').classList.remove('hidden'); document.getElementById('btn-edit-announcement').classList.remove('hidden');
+            document.getElementById('announcement-editor').classList.add('hidden'); document.getElementById('btn-save-announcement').classList.add('hidden');
+            renderAnnouncement();
         }
 
-        function closeModal() {
-            document.getElementById('action-modal').classList.add('hidden');
-            currentSelectedStudentId = null;
+        function renderContactBookList() {
+            const listEl = document.getElementById('contact-book-list'); listEl.innerHTML = '';
+            if (appContactBook.length === 0) { listEl.innerHTML = `<div class="text-center text-gray-400 py-6 font-bold border-2 border-dashed border-gray-200 rounded-xl">尚無聯絡簿紀錄，點擊上方新增今日作業！</div>`; return; }
+            appContactBook.forEach((entry, index) => {
+                listEl.innerHTML += `
+                    <div class="bg-white p-4 md:p-5 rounded-xl border border-green-100 shadow-sm relative group">
+                        <div class="absolute top-3 right-3 flex gap-2">
+                            <button onclick="openEnlargeModal('homework', ${index})" class="text-green-700 hover:text-green-900 text-xs md:text-sm font-bold bg-green-100 hover:bg-green-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shadow-sm">🔍 <span class="hidden md:inline">放大</span></button>
+                            <button onclick="deleteContactBook(${index})" class="text-gray-400 hover:text-red-500 text-xs md:text-sm font-bold bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-100 transition-colors">刪除</button>
+                        </div>
+                        <h3 class="font-bold text-green-800 border-b border-green-100 pb-2 mb-3 text-lg">🗓️ ${entry.date}</h3>
+                        <div class="text-gray-700 whitespace-pre-wrap leading-relaxed text-base md:text-lg">${entry.content}</div>
+                    </div>
+                `;
+            });
         }
+        function showAddContactBook() {
+            document.getElementById('contact-book-editor').classList.remove('hidden');
+            document.getElementById('contact-book-today-date').innerText = `🗓️ ${getTodayDateString()}`;
+            document.getElementById('contact-book-textarea').value = '';
+        }
+        function hideAddContactBook() { document.getElementById('contact-book-editor').classList.add('hidden'); }
+        function saveContactBook() {
+            const content = document.getElementById('contact-book-textarea').value.trim();
+            if(!content) { alert("聯絡簿內容不能為空喔！"); return; }
+            appContactBook.unshift({ date: getTodayDateString(), content: content });
+            localStorage.setItem('classAppContactBook', JSON.stringify(appContactBook));
+            hideAddContactBook(); renderContactBookList();
+            if(!document.getElementById('info-content-tracking').classList.contains('hidden')){ populateTrackingDates(); renderTracking(); }
+        }
+        function deleteContactBook(index) {
+            if(confirm("確定要刪除這天的聯絡簿紀錄嗎？")) { 
+                appContactBook.splice(index, 1); 
+                localStorage.setItem('classAppContactBook', JSON.stringify(appContactBook)); 
+                renderContactBookList(); populateTrackingDates(); renderTracking();
+            }
+        }
+
+        // ==========================================
+        // ✅ 升級：多欄位並排 作業追蹤系統 (解決只顯示13號問題)
+        // ==========================================
+        function populateTrackingDates() {
+            const select = document.getElementById('tracking-date-select');
+            select.innerHTML = '';
+            if (appContactBook.length === 0) {
+                select.innerHTML = '<option value="">(無聯絡簿紀錄)</option>'; return;
+            }
+            appContactBook.forEach((entry, i) => {
+                const opt = document.createElement('option');
+                opt.value = i; opt.text = `🗓️ ${entry.date}`; select.appendChild(opt);
+            });
+        }
+
+        function renderTracking() {
+            const select = document.getElementById('tracking-date-select');
+            const container = document.getElementById('tracking-tables-container');
+
+            if (appContactBook.length === 0 || !select.value) {
+                container.innerHTML = '<div class="text-center text-gray-400 py-10 font-bold bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">請先於「聯絡簿」新增內容，系統將自動產生追蹤表格！</div>';
+                return;
+            }
+
+            const entry = appContactBook[select.value];
+            currentTrackingDate = entry.date;
+            currentTrackingTasks = entry.content.split('\n').map(t => t.trim()).filter(t => t !== '');
+
+            if (currentTrackingTasks.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-400 py-10 font-bold bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">該日聯絡簿無文字內容可追蹤！</div>';
+                return;
+            }
+
+            // ⭐️ 核心邏輯：將學生均分為 3 組 (手機版自動變單行，電腦版並排 3 欄)
+            const numColumns = 3; 
+            const chunkSize = Math.ceil(students.length / numColumns);
+            
+            // 建立網格容器 (md 以上變 2 欄，lg 以上變 3 欄)
+            let html = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 items-start pb-4">`;
+
+            for (let c = 0; c < numColumns; c++) {
+                const chunk = students.slice(c * chunkSize, (c + 1) * chunkSize);
+                if (chunk.length === 0) continue;
+
+                // 每個區塊是一個獨立的表格外框 (讓內部可以左右滑動防止擠壓)
+                html += `
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+                    <div class="overflow-x-auto hide-scrollbar">
+                        <table class="w-full text-center border-collapse whitespace-nowrap text-sm md:text-base">
+                            <thead class="bg-gray-100 text-gray-700 shadow-sm">
+                                <tr>
+                                    <th class="sticky left-0 z-10 bg-gray-200 border-b border-r border-gray-300 p-2 min-w-[50px]">號碼</th>
+                `;
+
+                // 表頭：作業項目
+                currentTrackingTasks.forEach((task, i) => {
+                    html += `
+                                    <th class="border-b border-gray-300 p-2 min-w-[90px]">
+                                        <div class="truncate max-w-[100px] mx-auto font-black" title="${task}">${task}</div>
+                                        <button onclick="batchSetTracking(${i}, '已交')" class="mt-1.5 text-[10px] md:text-xs bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200 px-2 py-1 rounded-md transition-colors w-full font-bold">
+                                            ⚡ 全班已交
+                                        </button>
+                                    </th>
+                    `;
+                });
+
+                html += `       </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                `;
+
+                // 內容：學生號碼與按鈕
+                chunk.forEach(student => {
+                    if (!student.homework) student.homework = {};
+                    if (!student.homework[currentTrackingDate]) student.homework[currentTrackingDate] = {};
+
+                    html += `
+                                <tr class="hover:bg-orange-50 transition-colors border-b border-gray-100">
+                                    <td class="sticky left-0 z-10 bg-white border-r border-gray-200 p-2 font-black text-gray-800 shadow-[1px_0_0_0_#e5e7eb]">
+                                        ${student.id}
+                                    </td>
+                    `;
+
+                    currentTrackingTasks.forEach((task, i) => {
+                        const status = student.homework[currentTrackingDate][task] || '缺交';
+                        const colorClass = HW_COLORS[status];
+                        html += `
+                                    <td class="p-1.5 md:p-2">
+                                        <button onclick="cycleTrackingStatus(${student.id}, ${i}, this)" 
+                                            class="w-full py-2 px-1 rounded-lg text-xs md:text-sm font-bold border transition-colors select-none active:scale-95 ${colorClass}">
+                                            ${status}
+                                        </button>
+                                    </td>
+                        `;
+                    });
+                    html += `   </tr>`;
+                });
+
+                html += `       </tbody>
+                        </table>
+                    </div>
+                </div>`;
+            }
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function cycleTrackingStatus(studentId, taskIndex, btnElement) {
+            const task = currentTrackingTasks[taskIndex];
+            const student = students.find(s => s.id === studentId);
+            let currentStatus = student.homework[currentTrackingDate][task] || '缺交';
+            
+            let nextIndex = (HW_STATUSES.indexOf(currentStatus) + 1) % HW_STATUSES.length;
+            let newStatus = HW_STATUSES[nextIndex];
+            
+            student.homework[currentTrackingDate][task] = newStatus;
+            saveDataToCloud();
+            
+            const colorClass = HW_COLORS[newStatus];
+            btnElement.className = `w-full py-2 px-1 rounded-lg text-xs md:text-sm font-bold border transition-colors select-none active:scale-95 ${colorClass}`;
+            btnElement.innerText = newStatus;
+        }
+
+        function batchSetTracking(taskIndex, targetStatus) {
+            const task = currentTrackingTasks[taskIndex];
+            if(!confirm(`確定要將【全班】的「${task.substring(0,8)}...」都設為「${targetStatus}」嗎？`)) return;
+            
+            students.forEach(student => {
+                if (!student.homework) student.homework = {};
+                if (!student.homework[currentTrackingDate]) student.homework[currentTrackingDate] = {};
+                student.homework[currentTrackingDate][task] = targetStatus;
+            });
+            saveDataToCloud();
+            renderTracking(); // 全部重繪
+        }
+
+        // ==========================================
+        // --- 彈出視窗切換 (公告/聯絡簿/作業追蹤) ---
+        // ==========================================
+        function openInfoModal(type) {
+            document.getElementById('info-modal').classList.remove('hidden'); 
+            document.getElementById('info-content-announcement').classList.add('hidden');
+            document.getElementById('info-content-homework').classList.add('hidden'); 
+            document.getElementById('info-content-tracking').classList.add('hidden');
+            
+            document.getElementById(`info-content-${type}`).classList.remove('hidden');
+
+            if(type === 'tracking') {
+                populateTrackingDates();
+                renderTracking();
+            }
+        }
+
+        function closeInfoModal() {
+            document.getElementById('info-modal').classList.add('hidden');
+            document.getElementById('announcement-display').classList.remove('hidden'); document.getElementById('btn-edit-announcement').classList.remove('hidden');
+            document.getElementById('announcement-editor').classList.add('hidden'); document.getElementById('btn-save-announcement').classList.add('hidden');
+        }
+
+        function openEnlargeModal(type, index = null) {
+            const modal = document.getElementById('enlarge-modal'); const header = document.getElementById('enlarge-header');
+            const box = document.getElementById('enlarge-box'); const titleEl = document.getElementById('enlarge-title'); const contentEl = document.getElementById('enlarge-content');
+            modal.className = 'fixed inset-0 z-50 flex flex-col transition-colors duration-300';
+            header.className = 'flex justify-between items-center p-4 md:p-6 text-white shadow-lg';
+            box.className = 'w-full max-w-5xl bg-white p-6 md:p-12 rounded-3xl shadow-xl border-4 mt-2 md:mt-8';
+            if (type === 'announcement') {
+                modal.classList.add('bg-blue-50'); header.classList.add('bg-blue-700'); box.classList.add('border-blue-200');
+                titleEl.innerText = '📢 班級公告'; contentEl.innerText = appAnnouncement;
+            } else if (type === 'homework') {
+                const entry = appContactBook[index];
+                modal.classList.add('bg-green-50'); header.classList.add('bg-green-700'); box.classList.add('border-green-200');
+                titleEl.innerText = `🗓️ ${entry.date}`; contentEl.innerText = entry.content;
+            }
+        }
+        function closeEnlargeModal() { document.getElementById('enlarge-modal').classList.add('hidden'); document.getElementById('enlarge-modal').classList.remove('flex'); }
+
+        // ==========================================
+        // 學生操作視窗區塊 (保留原本功能)
+        // ==========================================
+        function openModal(studentId) {
+            currentSelectedStudentId = studentId; const student = students.find(s => s.id === studentId);
+            document.getElementById('modal-name').innerText = student.name; document.getElementById('modal-points').innerText = student.points;
+            document.getElementById('modal-avatar').innerText = getFruitEmoji(studentId); document.getElementById('custom-point-input').value = ''; document.getElementById('redeem-point-input').value = ''; 
+            renderHistoryList(student); renderRedeemHistoryList(student); renderPointHistoryList(student); switchTab('add'); 
+            document.getElementById('action-modal').classList.remove('hidden');
+        }
+        function closeModal() { document.getElementById('action-modal').classList.add('hidden'); currentSelectedStudentId = null; }
 
         function switchTab(tab) {
             const sections = ['add', 'redeem', 'history', 'redeem-history', 'point-history'];
             sections.forEach(s => {
-                const secEl = document.getElementById(`section-${s}`);
-                const tabEl = document.getElementById(`tab-${s}`);
+                const secEl = document.getElementById(`section-${s}`); const tabEl = document.getElementById(`tab-${s}`);
                 if (s === tab) {
-                    secEl.classList.remove('hidden');
-                    tabEl.classList.add('border-b-2', 'border-orange-500', 'text-orange-600');
-                    tabEl.classList.remove('text-gray-500');
+                    secEl.classList.remove('hidden'); tabEl.classList.add('border-b-2', 'border-orange-500', 'text-orange-600'); tabEl.classList.remove('text-gray-500');
                 } else {
-                    secEl.classList.add('hidden');
-                    tabEl.classList.remove('border-b-2', 'border-orange-500', 'text-orange-600');
-                    tabEl.classList.add('text-gray-500');
+                    secEl.classList.add('hidden'); tabEl.classList.remove('border-b-2', 'border-orange-500', 'text-orange-600'); tabEl.classList.add('text-gray-500');
                 }
             });
         }
 
         function renderPointHistoryList(student) {
-            const listEl = document.getElementById('point-history-list');
-            listEl.innerHTML = '';
-            if (!student.pointHistory || student.pointHistory.length === 0) {
-                listEl.innerHTML = `<li class="text-center text-gray-400 font-bold py-6">目前還沒有加扣點明細喔！</li>`;
-                return;
-            }
+            const listEl = document.getElementById('point-history-list'); listEl.innerHTML = '';
+            if (!student.pointHistory || student.pointHistory.length === 0) { listEl.innerHTML = `<li class="text-center text-gray-400 font-bold py-6">目前無紀錄喔！</li>`; return; }
             [...student.pointHistory].reverse().forEach((recordStr) => {
-                listEl.innerHTML += `<li class="flex items-start text-sm p-2 bg-white rounded border border-orange-100 text-orange-800 mb-1"><span class="mr-2 mt-0.5">➕</span> <span>${recordStr}</span></li>`;
+                const isAdd = recordStr.includes('(+'); const icon = isAdd ? '➕' : '➖';
+                const colorClass = isAdd ? 'text-green-700 border-green-200 bg-green-50' : 'text-red-700 border-red-200 bg-red-50';
+                listEl.innerHTML += `<li class="flex items-start text-xs md:text-sm p-2 rounded border ${colorClass} mb-1"><span class="mr-2 mt-0.5">${icon}</span> <span>${recordStr}</span></li>`;
             });
         }
 
         function renderHistoryList(student) {
-            const listEl = document.getElementById('late-history-list');
-            listEl.innerHTML = '';
-            if (!student.lateDates || student.lateDates.length === 0) {
-                listEl.innerHTML = `<li class="text-center text-green-600 font-bold py-6">✅ 目前沒有遲到紀錄！</li>`;
-                return;
-            }
+            const listEl = document.getElementById('late-history-list'); listEl.innerHTML = '';
+            if (!student.lateDates || student.lateDates.length === 0) { listEl.innerHTML = `<li class="text-center text-green-600 font-bold py-6">✅ 目前沒有遲到紀錄！</li>`; return; }
             const reversedDates = [...student.lateDates].reverse();
             reversedDates.forEach((dateStr, index) => {
                 const originalIndex = student.lateDates.length - 1 - index;
-                listEl.innerHTML += `
-                    <li class="flex items-center justify-between text-sm p-2 bg-white rounded border border-red-100 text-red-700 mb-1">
-                        <div class="flex items-center"><span class="mr-2">🏃</span> ${dateStr}</div>
-                        <button onclick="deleteLateRecord(${originalIndex})" class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-bold hover:bg-red-200">消除</button>
-                    </li>`;
+                listEl.innerHTML += `<li class="flex items-center justify-between text-xs md:text-sm p-2 bg-white rounded border border-red-100 text-red-700 mb-1"><div class="flex items-center"><span class="mr-2">🏃</span> ${dateStr}</div><button onclick="deleteLateRecord(${originalIndex})" class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-bold hover:bg-red-200">消除</button></li>`;
             });
         }
-
         function deleteLateRecord(index) {
-            if(confirm("確定要消除這筆遲到紀錄嗎？\n(注意：這不會退還點數，若需退還請使用手動加點)")) {
-                const student = students.find(s => s.id === currentSelectedStudentId);
-                student.lateDates.splice(index, 1); 
-                renderHistoryList(student); 
-                renderStudents(); 
-                saveDataToCloud();
-            }
+            if(confirm("確定消除這筆遲到紀錄嗎？")) { const student = students.find(s => s.id === currentSelectedStudentId); student.lateDates.splice(index, 1); renderHistoryList(student); renderStudents(); saveDataToCloud(); }
         }
 
         function renderRedeemHistoryList(student) {
-            const listEl = document.getElementById('redeem-history-list');
-            listEl.innerHTML = '';
-            if (!student.redeemHistory || student.redeemHistory.length === 0) {
-                listEl.innerHTML = `<li class="text-center text-gray-400 font-bold py-6">目前還沒有兌換過獎勵喔！</li>`;
-                return;
-            }
-            [...student.redeemHistory].reverse().forEach((recordStr) => {
-                listEl.innerHTML += `<li class="flex items-start text-sm p-2 bg-white rounded border border-green-100 text-green-800 mb-1"><span class="mr-2 mt-0.5">🎁</span> <span>${recordStr}</span></li>`;
-            });
+            const listEl = document.getElementById('redeem-history-list'); listEl.innerHTML = '';
+            if (!student.redeemHistory || student.redeemHistory.length === 0) { listEl.innerHTML = `<li class="text-center text-gray-400 font-bold py-6">目前還沒有兌換過獎勵喔！</li>`; return; }
+            [...student.redeemHistory].reverse().forEach((recordStr) => { listEl.innerHTML += `<li class="flex items-start text-xs md:text-sm p-2 bg-white rounded border border-blue-100 text-blue-800 mb-1"><span class="mr-2 mt-0.5">🎁</span> <span>${recordStr}</span></li>`; });
         }
 
         function quickAdd(type) {
-            const student = students.find(s => s.id === currentSelectedStudentId);
-            let pointsToChange = 0;
-            
-            if (type === 'punctual') {
-                pointsToChange = currentTodayPoints; 
-                student.pointHistory.push(`[${getFormattedTime()}] 每日準時到校 (+${currentTodayPoints}點)`);
-            } else if (type === 'late') {
-                if(!confirm(`確定要登記 ${student.name}「遲到」，並扣除 ${currentTodayPoints} 點嗎？`)) return; 
-                pointsToChange = -currentTodayPoints; 
-                student.lateDates.push(`[${getFormattedTime()}] 遲到登記`);
-                student.pointHistory.push(`[${getFormattedTime()}] 遲到扣除 (-${currentTodayPoints}點)`);
-            }
-            updateStudentPoints(currentSelectedStudentId, pointsToChange);
-            closeModal();
+            const student = students.find(s => s.id === currentSelectedStudentId); let pointsToChange = 0;
+            if (type === 'punctual') { pointsToChange = currentTodayPoints; student.pointHistory.push(`[${getFormattedTime()}] 準時到校 (+${currentTodayPoints}點)`); } 
+            else if (type === 'late') { if(!confirm(`確定要登記遲到並扣除 ${currentTodayPoints} 點嗎？`)) return; pointsToChange = -currentTodayPoints; student.lateDates.push(`[${getFormattedTime()}] 遲到登記`); student.pointHistory.push(`[${getFormattedTime()}] 遲到扣除 (-${currentTodayPoints}點)`); }
+            updateStudentPoints(currentSelectedStudentId, pointsToChange); closeModal();
         }
 
         function submitCustomPoints() {
-            const pointsToAdd = parseInt(document.getElementById('custom-point-input').value);
-            if (isNaN(pointsToAdd)) { alert("請輸入有效的數字！"); return; }
-            
-            const student = students.find(s => s.id === currentSelectedStudentId);
-            const sign = pointsToAdd >= 0 ? '+' : '';
-            student.pointHistory.push(`[${getFormattedTime()}] 手動特殊調整 (${sign}${pointsToAdd}點)`);
-
-            updateStudentPoints(currentSelectedStudentId, pointsToAdd);
-            closeModal();
+            const pts = parseInt(document.getElementById('custom-point-input').value); if (isNaN(pts)) { alert("請輸入有效的數字！"); return; }
+            const student = students.find(s => s.id === currentSelectedStudentId); student.pointHistory.push(`[${getFormattedTime()}] 手動調整 (${pts >= 0 ? '+' : ''}${pts}點)`);
+            updateStudentPoints(currentSelectedStudentId, pts); closeModal();
         }
 
         function submitRedemption() {
-            const selectedRadio = document.querySelector('input[name="reward"]:checked');
-            if (!selectedRadio) { alert("請先選擇一個兌換項目！"); return; }
-            const cost = parseInt(document.getElementById('redeem-point-input').value);
-            if (isNaN(cost) || cost <= 0) { alert("請輸入要扣除的點數！"); return; }
-            
-            const student = students.find(s => s.id === currentSelectedStudentId);
-            if (student.points < cost) {
-                alert(`點數不足。還差 ${cost - student.points} 點喔！`); return;
-            }
-
-            if (confirm(`確定花費 ${cost} 點兌換「${selectedRadio.value}」嗎？`)) {
-                const timeStr = getFormattedTime();
-                student.redeemHistory.push(`[${timeStr}] 兌換 <b>${selectedRadio.value}</b> (-${cost}點)`);
-                student.pointHistory.push(`[${timeStr}] 兌換獎勵扣點 (-${cost}點)`);
-                
-                updateStudentPoints(currentSelectedStudentId, -cost); 
-                alert("🎉 兌換成功！");
-                closeModal();
+            const selected = document.querySelector('input[name="reward"]:checked'); if (!selected) { alert("請先選擇兌換項目！"); return; }
+            const cost = parseInt(document.getElementById('redeem-point-input').value); if (isNaN(cost) || cost <= 0) { alert("請輸入扣除點數！"); return; }
+            const student = students.find(s => s.id === currentSelectedStudentId); if (student.points < cost) { alert(`點數不足！還差 ${cost - student.points} 點。`); return; }
+            if (confirm(`確定花 ${cost} 點兌換「${selected.value}」嗎？`)) {
+                const timeStr = getFormattedTime(); student.redeemHistory.push(`[${timeStr}] 兌換 <b>${selected.value}</b>`); student.pointHistory.push(`[${timeStr}] 兌換獎勵 (-${cost}點)`);
+                updateStudentPoints(currentSelectedStudentId, -cost); alert("🎉 兌換成功！"); closeModal();
             }
         }
 
-        function updateStudentPoints(studentId, pointsToChange) {
-            const studentIndex = students.findIndex(s => s.id === studentId);
-            if (studentIndex !== -1) {
-                students[studentIndex].points += pointsToChange;
-                renderStudents();  
-                saveDataToCloud(); 
-            }
-        }
-
+        function updateStudentPoints(studentId, pointsToChange) { const index = students.findIndex(s => s.id === studentId); if (index !== -1) { students[index].points += pointsToChange; renderStudents(); saveDataToCloud(); } }
         window.onload = loadDataFromCloud;
     </script>
 </body>
