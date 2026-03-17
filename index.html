@@ -22,6 +22,15 @@
             </div>
             
             <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full md:w-auto justify-center md:justify-end">
+                
+                <button onclick="openCountdownSettings()" class="flex-1 md:flex-none bg-rose-100 text-rose-700 font-bold px-3 py-2 rounded-xl hover:bg-rose-200 active:scale-95 transition-all shadow-sm flex flex-col items-center justify-center min-w-[100px]">
+                    <span id="display-event-name" class="text-xs md:text-sm opacity-80">距離 目標</span>
+                    <div class="flex items-baseline gap-1">
+                        <span id="display-countdown-days" class="text-lg md:text-xl font-black">--</span>
+                        <span class="text-xs md:text-sm">天</span>
+                    </div>
+                </button>
+
                 <button onclick="openInfoModal('announcement')" class="flex-1 md:flex-none bg-blue-100 text-blue-700 font-bold px-3 py-3 rounded-xl hover:bg-blue-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1">
                     <span class="text-lg md:text-xl">📢</span> <span class="text-sm md:text-base">公告</span>
                 </button>
@@ -99,6 +108,25 @@
         <div class="flex-1 overflow-y-auto p-4 md:p-12 lg:p-16 flex justify-center items-start">
             <div id="enlarge-box" class="w-full max-w-[95%] lg:max-w-6xl bg-white p-8 md:p-16 lg:p-20 rounded-[2rem] shadow-2xl border-4 mt-2 md:mt-8">
                 <div id="enlarge-content" class="text-5xl md:text-7xl lg:text-[80px] text-gray-900 whitespace-pre-wrap leading-snug md:leading-tight font-black tracking-wide"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="countdown-setting-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-5 md:p-7 rounded-3xl shadow-2xl w-full max-w-sm relative transform transition-all border border-gray-100 flex flex-col">
+            <button onclick="closeCountdownSettings()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-4xl font-light z-10">&times;</button>
+            <h2 class="text-2xl font-black text-rose-700 mb-5 flex items-center gap-2">⏳ 倒數設定</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1 text-sm">目標名稱 (例如：畢業、期末考)</label>
+                    <input type="text" id="input-event-name" placeholder="請輸入目標名稱" class="w-full border-2 border-rose-200 rounded-xl p-2.5 focus:outline-none focus:border-rose-400 font-bold bg-rose-50 text-rose-900">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1 text-sm">目標日期</label>
+                    <input type="date" id="input-event-date" class="w-full border-2 border-rose-200 rounded-xl p-2.5 focus:outline-none focus:border-rose-400 font-bold bg-rose-50 text-rose-900 cursor-pointer">
+                </div>
+                <button onclick="saveCountdownSettings()" class="w-full bg-rose-500 text-white px-4 py-3 rounded-xl font-bold shadow-sm hover:bg-rose-600 mt-2 text-lg transition-colors">💾 儲存設定</button>
             </div>
         </div>
     </div>
@@ -588,7 +616,72 @@
         }
 
         function updateStudentPoints(studentId, pointsToChange) { const index = students.findIndex(s => s.id === studentId); if (index !== -1) { students[index].points += pointsToChange; renderStudents(); saveDataToCloud(); } }
-        window.onload = loadDataFromCloud;
+
+        // ==========================================
+        // ⏳ 倒數計時器邏輯
+        // ==========================================
+        let countdownData = JSON.parse(localStorage.getItem('classAppCountdown')) || { name: '目標', date: '' };
+
+        function updateCountdownDisplay() {
+            const nameEl = document.getElementById('display-event-name');
+            const daysEl = document.getElementById('display-countdown-days');
+            
+            if (!countdownData.date) {
+                nameEl.innerText = '點擊設定倒數';
+                daysEl.innerText = '--';
+                return;
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); 
+            const targetDate = new Date(countdownData.date);
+            targetDate.setHours(0, 0, 0, 0);
+
+            const diffTime = targetDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays > 0) {
+                nameEl.innerText = `距離 ${countdownData.name}`;
+                daysEl.innerText = diffDays;
+            } else if (diffDays === 0) {
+                nameEl.innerText = `就是今天！`;
+                daysEl.innerText = '0';
+            } else {
+                nameEl.innerText = `${countdownData.name}已過`;
+                daysEl.innerText = Math.abs(diffDays);
+            }
+        }
+
+        function openCountdownSettings() {
+            document.getElementById('input-event-name').value = countdownData.name !== '目標' ? countdownData.name : '';
+            document.getElementById('input-event-date').value = countdownData.date;
+            document.getElementById('countdown-setting-modal').classList.remove('hidden');
+        }
+
+        function closeCountdownSettings() {
+            document.getElementById('countdown-setting-modal').classList.add('hidden');
+        }
+
+        function saveCountdownSettings() {
+            const name = document.getElementById('input-event-name').value.trim();
+            const date = document.getElementById('input-event-date').value;
+            
+            if (!name || !date) {
+                alert('名稱與日期都不能為空喔！');
+                return;
+            }
+
+            countdownData = { name, date };
+            localStorage.setItem('classAppCountdown', JSON.stringify(countdownData));
+            updateCountdownDisplay();
+            closeCountdownSettings();
+        }
+
+        // 初始載入
+        window.onload = () => {
+            loadDataFromCloud();
+            updateCountdownDisplay();
+        };
     </script>
 </body>
 </html>
