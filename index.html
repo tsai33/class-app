@@ -135,7 +135,7 @@
         <div class="bg-white p-5 md:p-7 rounded-3xl shadow-2xl w-full max-w-md relative transform transition-all border border-gray-100 flex flex-col max-h-[90vh]">
             <button onclick="closeModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-5xl font-light leading-none z-10">&times;</button>
             <div class="text-center mb-5 shrink-0">
-                <div id="modal-avatar" class="w-20 h-20 md:w-24 md:h-24 mx-auto rounded-full bg-orange-50 mb-2 border-4 border-white shadow-md flex items-center justify-center text-5xl md:text-6xl select-none">🍎</div>
+                <div id="modal-avatar" class="w-24 h-24 md:w-32 md:h-32 mx-auto rounded-full bg-orange-50 mb-2 border-4 border-white shadow-md flex items-center justify-center text-5xl md:text-6xl select-none overflow-hidden"></div>
                 <h2 id="modal-name" class="text-xl md:text-2xl font-bold text-gray-800">學生姓名</h2>
                 <p class="text-gray-500 text-sm md:text-base mt-1">累積: <span id="modal-points" class="text-orange-600 font-black text-xl md:text-2xl">0</span> 點</p>
             </div>
@@ -261,7 +261,8 @@
                 const card = document.createElement('div'); card.id = `student-card-${student.id}`;
                 card.className = "bg-white p-2 md:p-3 rounded-2xl shadow-md cursor-pointer transform transition-all hover:-translate-y-1 flex flex-col items-center border border-gray-100 relative ring-orange-400 hover:ring-2 hover:border-orange-200";
                 card.onclick = () => openModal(student.id);
-                card.innerHTML = `${warningIcon}<div class="relative w-12 h-12 md:w-16 md:h-16 rounded-full mb-1 bg-orange-50 border-2 md:border-4 border-white shadow-inner flex items-center justify-center text-3xl md:text-4xl select-none">${getFruitEmoji(student.id)}</div><h3 class="font-bold text-gray-800 text-xs md:text-sm truncate w-full text-center">${student.name}</h3><div class="mt-1 bg-orange-100 text-orange-900 px-1 py-0.5 md:py-1 rounded-lg font-black text-xs md:text-sm w-full text-center border border-orange-200 shadow-inner">${student.points}</div>`;
+                // ⭐️ 這裡已經放大了首頁的圓圈頭像 (w-16 h-16 / md:w-24 md:h-24)，並調整了字體大小與 fallback 防呆機制
+                card.innerHTML = `${warningIcon}<div class="relative w-16 h-16 md:w-24 md:h-24 rounded-full mb-1 bg-orange-50 border-2 md:border-4 border-white shadow-inner flex items-center justify-center select-none overflow-hidden"><img src="images/${student.id}.jpg" loading="lazy" class="w-full h-full object-cover object-top scale-125" onerror="this.outerHTML='<span class=\\'text-4xl md:text-5xl\\'>${getFruitEmoji(student.id)}</span>'"></div><h3 class="font-bold text-gray-800 text-sm md:text-base truncate w-full text-center mt-1">${student.name}</h3><div class="mt-1 bg-orange-100 text-orange-900 px-1 py-0.5 md:py-1 rounded-lg font-black text-xs md:text-sm w-full text-center border border-orange-200 shadow-inner">${student.points}</div>`;
                 grid.appendChild(card);
             });
         }
@@ -316,7 +317,6 @@
             });
         }
 
-        // ⭐️ 新增：日期預設載入今日
         function showAddContactBook() {
             document.getElementById('contact-book-editor').classList.remove('hidden');
             
@@ -342,7 +342,6 @@
 
             appContactBook.unshift({ date: formattedDate, content: content });
             
-            // ⭐️ 自動排序：依據日期由新到舊排列
             appContactBook.sort((a, b) => b.date.localeCompare(a.date));
 
             localStorage.setItem('classAppContactBook', JSON.stringify(appContactBook));
@@ -535,7 +534,10 @@
         function openModal(studentId) {
             currentSelectedStudentId = studentId; const student = students.find(s => s.id === studentId);
             document.getElementById('modal-name').innerText = student.name; document.getElementById('modal-points').innerText = student.points;
-            document.getElementById('modal-avatar').innerText = getFruitEmoji(studentId); 
+            
+            // ⭐️ 彈出視窗的大頭像也加入了防呆機制與放大參數
+            document.getElementById('modal-avatar').classList.add('overflow-hidden');
+            document.getElementById('modal-avatar').innerHTML = `<img src="images/${student.id}.jpg" class="w-full h-full object-cover object-top scale-125" onerror="this.outerHTML='<span class=\\'text-6xl md:text-7xl\\'>${getFruitEmoji(student.id)}</span>'">`;
             
             document.getElementById('custom-point-input').value = ''; 
             document.getElementById('redeem-point-input').value = ''; 
