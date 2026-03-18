@@ -10,61 +10,95 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        iframe { border: none; }
     </style>
 </head>
-<body class="bg-orange-50 p-4 md:p-8 font-sans min-h-screen">
+<body class="bg-orange-50 font-sans h-screen flex flex-col md:flex-row overflow-hidden">
 
-    <div class="max-w-6xl mx-auto">
-        <div class="bg-white rounded-3xl shadow-lg p-4 md:p-6 mb-8 flex flex-col md:flex-row justify-between items-center border-l-8 border-orange-400 gap-4">
-            <div class="text-center md:text-left w-full md:w-auto">
-                <h1 class="text-2xl md:text-3xl font-black text-orange-700 mb-1">🍉 班級大作戰</h1>
-                <p class="text-sm md:text-base text-gray-600 font-medium" id="today-point-info">讀取中...</p>
-            </div>
-            
-            <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full md:w-auto justify-center md:justify-end">
-                
-                <button onclick="openCountdownSettings()" class="flex-1 md:flex-none bg-rose-100 text-rose-700 font-bold px-3 py-2 rounded-xl hover:bg-rose-200 active:scale-95 transition-all shadow-sm flex flex-col items-center justify-center min-w-[100px]">
-                    <span id="display-event-name" class="text-xs md:text-sm opacity-80">距離 目標</span>
-                    <div class="flex items-baseline gap-1">
-                        <span id="display-countdown-days" class="text-lg md:text-xl font-black">--</span>
-                        <span class="text-xs md:text-sm">天</span>
+    <nav class="bg-white shadow-xl w-full md:w-20 md:hover:w-56 transition-[width] duration-300 ease-in-out overflow-hidden group flex-shrink-0 flex flex-row md:flex-col p-3 md:py-5 md:px-3 gap-2 md:gap-4 z-30 overflow-x-auto md:overflow-visible border-b md:border-b-0 md:border-r border-gray-200">
+        
+        <div class="hidden md:flex flex-col items-center mb-4 border-b-2 border-orange-100 pb-4 pt-2">
+            <span class="text-4xl group-hover:text-5xl transition-all duration-300 drop-shadow-sm shrink-0">👨‍🏫</span>
+            <h2 class="text-lg font-black text-gray-800 mt-2 tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">班級管理系統</h2>
+        </div>
+        
+        <button onclick="switchAppTab('main')" id="nav-tab-main" class="flex-1 md:flex-none w-full px-3 py-3 md:py-4 rounded-xl font-black text-white bg-orange-500 shadow-md transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-orange-500 overflow-hidden">
+            <span class="text-xl md:text-2xl min-w-[28px] text-center shrink-0">🍉</span> 
+            <span class="whitespace-nowrap opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300">班級大作戰</span>
+        </button>
+
+        <button onclick="switchAppTab('tool')" id="nav-tab-tool" class="flex-1 md:flex-none w-full px-3 py-3 md:py-4 rounded-xl font-bold text-gray-500 bg-gray-50 hover:bg-gray-200 transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-gray-100 overflow-hidden">
+            <span class="text-xl md:text-2xl min-w-[28px] text-center shrink-0">🌟</span> 
+            <span class="whitespace-nowrap opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300">餐桶分配</span>
+        </button>
+
+        <button onclick="switchAppTab('tool2')" id="nav-tab-tool2" class="flex-1 md:flex-none w-full px-3 py-3 md:py-4 rounded-xl font-bold text-gray-500 bg-gray-50 hover:bg-gray-200 transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-gray-100 overflow-hidden">
+            <span class="text-xl md:text-2xl min-w-[28px] text-center shrink-0">📝</span> 
+            <span class="whitespace-nowrap opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300">學生檢核表</span>
+        </button>
+    </nav>
+
+    <div class="flex-1 h-full overflow-y-auto relative w-full bg-orange-50 hide-scrollbar">
+        
+        <div id="app-main" class="block p-4 md:p-6 lg:p-8 w-full animate-[fadeIn_0.5s_ease-in-out]">
+            <div class="max-w-6xl mx-auto">
+                <div class="bg-white rounded-3xl shadow-lg p-4 md:p-6 mb-8 flex flex-col lg:flex-row justify-between items-center border-l-8 border-orange-400 gap-4">
+                    <div class="text-center lg:text-left w-full lg:w-auto">
+                        <h1 class="text-2xl md:text-3xl font-black text-orange-700 mb-1">🍉 班級大作戰</h1>
+                        <p class="text-sm md:text-base text-gray-600 font-medium" id="today-point-info">讀取中...</p>
                     </div>
-                </button>
-
-                <button onclick="openInfoModal('announcement')" class="flex-1 md:flex-none bg-blue-100 text-blue-700 font-bold px-3 py-3 rounded-xl hover:bg-blue-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1">
-                    <span class="text-lg md:text-xl">📢</span> <span class="text-sm md:text-base">公告</span>
-                </button>
-                <button onclick="openInfoModal('homework')" class="flex-1 md:flex-none bg-green-100 text-green-700 font-bold px-3 py-3 rounded-xl hover:bg-green-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1">
-                    <span class="text-lg md:text-xl">📖</span> <span class="text-sm md:text-base">聯絡簿</span>
-                </button>
-                <button onclick="openInfoModal('tracking')" class="flex-1 md:flex-none bg-purple-100 text-purple-700 font-bold px-3 py-3 rounded-xl hover:bg-purple-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1">
-                    <span class="text-lg md:text-xl">✅</span> <span class="text-sm md:text-base">作業追蹤</span>
-                </button>
-                <button id="btn-random-draw" onclick="randomDraw()" class="w-full md:w-auto bg-yellow-400 text-yellow-950 font-extrabold px-4 py-3 rounded-xl hover:bg-yellow-500 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1">
-                    <span class="text-xl">🎲</span> <span>抽籤</span>
-                </button>
+                    
+                    <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full lg:w-auto justify-center lg:justify-end">
+                        <button onclick="openCountdownSettings()" class="flex-1 md:flex-none bg-rose-100 text-rose-700 font-bold px-3 py-2 rounded-xl hover:bg-rose-200 active:scale-95 transition-all shadow-sm flex flex-col items-center justify-center min-w-[100px]">
+                            <span id="display-event-name" class="text-xs md:text-sm opacity-80">距離 目標</span>
+                            <div class="flex items-baseline gap-1">
+                                <span id="display-countdown-days" class="text-lg md:text-xl font-black">--</span>
+                                <span class="text-xs md:text-sm">天</span>
+                            </div>
+                        </button>
+                        <button onclick="openInfoModal('announcement')" class="flex-1 md:flex-none bg-blue-100 text-blue-700 font-bold px-3 py-3 rounded-xl hover:bg-blue-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">📢</span> <span class="text-sm md:text-base">公告</span></button>
+                        <button onclick="openInfoModal('homework')" class="flex-1 md:flex-none bg-green-100 text-green-700 font-bold px-3 py-3 rounded-xl hover:bg-green-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">📖</span> <span class="text-sm md:text-base">聯絡簿</span></button>
+                        <button onclick="openInfoModal('tracking')" class="flex-1 md:flex-none bg-purple-100 text-purple-700 font-bold px-3 py-3 rounded-xl hover:bg-purple-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">✅</span> <span class="text-sm md:text-base">作業追蹤</span></button>
+                        <button id="btn-random-draw" onclick="randomDraw()" class="w-full md:w-auto bg-yellow-400 text-yellow-950 font-extrabold px-4 py-3 rounded-xl hover:bg-yellow-500 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1"><span class="text-xl">🎲</span> <span>抽籤</span></button>
+                    </div>
+                </div>
+                <div id="student-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4 md:gap-5"></div>
             </div>
         </div>
 
-        <div id="student-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4 md:gap-5">
-            </div>
+        <div id="app-tool" class="hidden h-full w-full bg-white flex-col animate-[fadeIn_0.5s_ease-in-out]">
+            <iframe src="https://tsai33.github.io/supreme-parakeet/" class="w-full h-full flex-1 border-none"></iframe>
+        </div>
+
+        <div id="app-tool2" class="hidden h-full w-full bg-white flex-col animate-[fadeIn_0.5s_ease-in-out]">
+            <iframe src="https://tsai33.github.io/studentchecklist/" class="w-full h-full flex-1 border-none"></iframe>
+        </div>
+
     </div>
 
-    <div id="info-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-40 p-2 md:p-4">
+    <div id="info-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50 p-2 md:p-4">
         <div class="bg-white p-4 md:p-6 rounded-3xl shadow-2xl w-full max-w-[95vw] xl:max-w-[90vw] relative transform transition-all border border-gray-100 max-h-[95vh] flex flex-col">
             <button onclick="closeInfoModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-4xl font-light z-40">&times;</button>
             
             <div id="info-content-announcement" class="hidden flex-1 overflow-y-auto hide-scrollbar mt-2 max-w-5xl mx-auto w-full">
                 <div class="flex justify-between items-center mb-4 pr-8">
-                    <h2 class="text-2xl font-black text-blue-700 flex items-center gap-2">📢 班級公告</h2>
+                    <h2 class="text-2xl font-black text-blue-700 flex items-center gap-2">📢 班級公告牆</h2>
+                    <button onclick="showAddAnnouncement()" class="text-sm bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-200 font-bold transition-colors shadow-sm">➕ 新增公告</button>
+                </div>
+                
+                <div id="announcement-editor-area" class="hidden mb-5 bg-blue-50 p-4 rounded-xl border-2 border-blue-200 shadow-inner">
+                    <div class="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                        <span class="text-lg">🗓️ 日期：</span>
+                        <input type="date" id="announcement-date-input" class="border-2 border-blue-200 rounded-lg p-1.5 focus:outline-none focus:border-blue-400 bg-white text-blue-900 cursor-pointer shadow-sm text-base font-bold">
+                    </div>
+                    <textarea id="announcement-textarea" placeholder="請輸入公告內容..." class="w-full h-32 border border-blue-200 rounded-lg p-4 mt-2 mb-4 focus:outline-none focus:border-blue-400 bg-white leading-relaxed text-lg"></textarea>
                     <div class="flex gap-2">
-                        <button onclick="openEnlargeModal('announcement')" class="text-sm bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 font-bold transition-colors border border-blue-100 flex items-center gap-1">🔍 <span class="hidden md:inline">放大</span></button>
-                        <button onclick="toggleEditAnnouncement()" id="btn-edit-announcement" class="text-sm bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-200 font-bold transition-colors">✏️ 編輯</button>
+                        <button onclick="saveAnnouncement()" class="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 shadow-sm text-lg">發布公告</button>
+                        <button onclick="hideAddAnnouncement()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-400 text-lg">取消</button>
                     </div>
                 </div>
-                <div id="announcement-display" class="bg-blue-50 p-5 md:p-8 rounded-2xl border border-blue-100 whitespace-pre-wrap text-gray-800 leading-relaxed font-medium text-lg md:text-xl lg:text-2xl min-h-[150px]"></div>
-                <textarea id="announcement-editor" class="hidden w-full h-48 border-2 border-blue-200 rounded-xl p-4 text-lg focus:outline-none focus:border-blue-400 mb-3 bg-white" placeholder="請輸入班級公告..."></textarea>
-                <button id="btn-save-announcement" onclick="saveAnnouncement()" class="hidden bg-blue-600 text-white px-4 py-3 rounded-xl font-bold w-full hover:bg-blue-700 transition-colors shadow-md text-lg">💾 儲存公告</button>
+
+                <div id="announcement-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-4 pb-4"></div>
             </div>
 
             <div id="info-content-homework" class="hidden flex-1 overflow-y-auto hide-scrollbar flex-col mt-2 max-w-5xl mx-auto w-full">
@@ -72,7 +106,6 @@
                     <h2 class="text-2xl font-black text-green-700 flex items-center gap-2">📖 聯絡簿紀錄</h2>
                     <button onclick="showAddContactBook()" class="text-sm bg-green-100 text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-200 font-bold transition-colors shadow-sm">➕ 新增紀錄</button>
                 </div>
-                
                 <div id="contact-book-editor" class="hidden mb-5 bg-green-50 p-4 rounded-xl border-2 border-green-200 shadow-inner">
                     <div class="font-bold text-green-800 mb-2 flex items-center gap-2">
                         <span class="text-lg">🗓️ 日期：</span>
@@ -84,23 +117,20 @@
                         <button onclick="hideAddContactBook()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-400 text-lg">取消</button>
                     </div>
                 </div>
-
                 <div id="contact-book-list" class="space-y-4 pb-4"></div>
             </div>
-
+            
             <div id="info-content-tracking" class="hidden flex-col h-full mt-2 w-full">
                 <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-3 pr-8 shrink-0">
                     <h2 class="text-2xl font-black text-purple-700 flex items-center gap-2">✅ 作業追蹤</h2>
                     <select id="tracking-date-select" onchange="renderTracking()" class="w-full md:w-64 border-2 border-purple-200 bg-purple-50 text-purple-800 rounded-xl p-2 font-bold focus:outline-none focus:border-purple-400 cursor-pointer text-base md:text-lg"></select>
                 </div>
-
-                <div id="tracking-tables-container" class="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar pb-6">
-                    </div>
+                <div id="tracking-tables-container" class="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar pb-6"></div>
             </div>
         </div>
     </div>
 
-    <div id="enlarge-modal" class="fixed inset-0 z-50 hidden flex-col transition-colors duration-300">
+    <div id="enlarge-modal" class="fixed inset-0 z-[60] hidden flex-col transition-colors duration-300">
         <div id="enlarge-header" class="flex justify-between items-center p-4 md:p-6 text-white shadow-lg">
             <h2 id="enlarge-title" class="text-4xl md:text-6xl lg:text-7xl font-black tracking-wider drop-shadow-md">標題</h2>
             <button onclick="closeEnlargeModal()" class="text-white hover:opacity-75 text-5xl md:text-7xl font-light leading-none px-4">&times;</button>
@@ -116,7 +146,6 @@
         <div class="bg-white p-5 md:p-7 rounded-3xl shadow-2xl w-full max-w-sm relative transform transition-all border border-gray-100 flex flex-col">
             <button onclick="closeCountdownSettings()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-4xl font-light z-10">&times;</button>
             <h2 class="text-2xl font-black text-rose-700 mb-5 flex items-center gap-2">⏳ 倒數設定</h2>
-            
             <div class="space-y-4">
                 <div>
                     <label class="block text-gray-700 font-bold mb-1 text-sm">目標名稱 (例如：畢業、期末考)</label>
@@ -131,7 +160,7 @@
         </div>
     </div>
 
-    <div id="action-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-40 p-4">
+    <div id="action-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white p-5 md:p-7 rounded-3xl shadow-2xl w-full max-w-md relative transform transition-all border border-gray-100 flex flex-col max-h-[90vh]">
             <button onclick="closeModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-5xl font-light leading-none z-10">&times;</button>
             <div class="text-center mb-5 shrink-0">
@@ -141,11 +170,11 @@
             </div>
             
             <div class="flex border-b mb-4 text-xs md:text-sm overflow-x-auto whitespace-nowrap hide-scrollbar border-gray-200 shrink-0">
-                <button onclick="switchTab('add')" id="tab-add" class="px-2 py-2 border-b-2 border-orange-500 text-orange-600 font-bold transition-colors">加扣點</button>
-                <button onclick="switchTab('redeem')" id="tab-redeem" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換獎勵</button>
-                <button onclick="switchTab('point-history')" id="tab-point-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">加扣紀錄</button>
-                <button onclick="switchTab('history')" id="tab-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">遲到紀錄</button>
-                <button onclick="switchTab('redeem-history')" id="tab-redeem-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換紀錄</button>
+                <button onclick="switchTabAction('add')" id="tab-add" class="px-2 py-2 border-b-2 border-orange-500 text-orange-600 font-bold transition-colors">加扣點</button>
+                <button onclick="switchTabAction('redeem')" id="tab-redeem" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換獎勵</button>
+                <button onclick="switchTabAction('point-history')" id="tab-point-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">加扣紀錄</button>
+                <button onclick="switchTabAction('history')" id="tab-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">遲到紀錄</button>
+                <button onclick="switchTabAction('redeem-history')" id="tab-redeem-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換紀錄</button>
             </div>
 
             <div class="flex-1 overflow-y-auto hide-scrollbar pb-2">
@@ -154,14 +183,29 @@
                         <button id="btn-punctual" onclick="quickAdd('punctual')" class="flex-1 bg-green-500 text-white py-3 md:py-4 rounded-xl font-bold md:text-lg hover:bg-green-600 active:scale-95 transition-all shadow-md flex flex-col items-center justify-center"><span>🌅 準時加點</span><span id="label-punctual" class="text-xs font-normal opacity-90">+0 點</span></button>
                         <button id="btn-late" onclick="quickAdd('late')" class="flex-1 bg-red-500 text-white py-3 md:py-4 rounded-xl font-bold md:text-lg hover:bg-red-600 active:scale-95 transition-all shadow-md flex flex-col items-center justify-center"><span>🏃 登記遲到</span><span id="label-late" class="text-xs font-normal opacity-90">-0 點</span></button>
                     </div>
+
                     <div class="relative flex items-center py-1"><div class="flex-grow border-t border-gray-200"></div><span class="flex-shrink-0 mx-4 text-gray-400 text-xs">手動特殊調整</span><div class="flex-grow border-t border-gray-200"></div></div>
+                    
                     <div class="flex items-center gap-2">
-                        <input type="number" id="custom-point-input" placeholder="正數加點，負數扣點" class="flex-1 border-2 border-gray-200 p-2.5 rounded-xl focus:outline-none focus:border-orange-400 text-center font-bold text-sm md:text-base bg-gray-50 shadow-inner">
+                        <input type="number" id="custom-point-input" placeholder="正數加點，負數按 ➖" class="flex-1 border-2 border-gray-200 p-2.5 rounded-xl focus:outline-none focus:border-orange-400 text-center font-bold text-sm md:text-base bg-gray-50 shadow-inner">
                         <button onclick="submitCustomPoints()" class="bg-gray-800 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-gray-900 active:scale-95 transition-all text-sm shadow-sm">確認</button>
                     </div>
-                </div>
 
-                <div id="section-redeem" class="hidden space-y-3">
+                    <div class="grid grid-cols-3 gap-2 mt-2">
+                        <button onclick="appendNumpad('1')" class="bg-white border-2 border-gray-100 py-2 rounded-lg font-bold text-gray-700 hover:bg-orange-50 active:bg-orange-100 shadow-sm transition-colors text-lg">1</button>
+                        <button onclick="appendNumpad('2')" class="bg-white border-2 border-gray-100 py-2 rounded-lg font-bold text-gray-700 hover:bg-orange-50 active:bg-orange-100 shadow-sm transition-colors text-lg">2</button>
+                        <button onclick="appendNumpad('3')" class="bg-white border-2 border-gray-100 py-2 rounded-lg font-bold text-gray-700 hover:bg-orange-50 active:bg-orange-100 shadow-sm transition-colors text-lg">3</button>
+                        <button onclick="appendNumpad('4')" class="bg-white border-2 border-gray-100 py-2 rounded-lg font-bold text-gray-700 hover:bg-orange-50 active:bg-orange-100 shadow-sm transition-colors text-lg">4</button>
+                        <button onclick="appendNumpad('5')" class="bg-white border-2 border-gray-100 py-2 rounded-lg font-bold text-gray-700 hover:bg-orange-50 active:bg-orange-100 shadow-sm transition-colors text-lg">5</button>
+                        <button onclick="appendNumpad('6')" class="bg-white border-2 border-gray-100 py-2 rounded-lg font-bold text-gray-700 hover:bg-orange-50 active:bg-orange-100 shadow-sm transition-colors text-lg">6</button>
+                        <button onclick="appendNumpad('7')" class="bg-white border-2 border-gray-100 py-2 rounded-lg font-bold text-gray-700 hover:bg-orange-50 active:bg-orange-100 shadow-sm transition-colors text-lg">7</button>
+                        <button onclick="appendNumpad('8')" class="bg-white border-2 border-gray-100 py-2 rounded-lg font-bold text-gray-700 hover:bg-orange-50 active:bg-orange-100 shadow-sm transition-colors text-lg">8</button>
+                        <button onclick="appendNumpad('9')" class="bg-white border-2 border-gray-100 py-2 rounded-lg font-bold text-gray-700 hover:bg-orange-50 active:bg-orange-100 shadow-sm transition-colors text-lg">9</button>
+                        <button onclick="appendNumpad('-')" class="bg-orange-100 border-2 border-orange-200 text-orange-700 py-2 rounded-lg font-black hover:bg-orange-200 active:bg-orange-300 shadow-sm transition-colors text-lg">➖ (負號)</button>
+                        <button onclick="appendNumpad('0')" class="bg-white border-2 border-gray-100 py-2 rounded-lg font-bold text-gray-700 hover:bg-orange-50 active:bg-orange-100 shadow-sm transition-colors text-lg">0</button>
+                        <button onclick="appendNumpad('backspace')" class="bg-red-50 border-2 border-red-100 text-red-600 py-2 rounded-lg font-bold hover:bg-red-100 active:bg-red-200 shadow-sm transition-colors text-lg">⌫ 刪除</button>
+                    </div>
+                </div> <div id="section-redeem" class="hidden space-y-3">
                     <div class="h-48 overflow-y-auto border-2 border-gray-200 rounded-xl p-2 space-y-2 bg-gray-50 hide-scrollbar">
                         <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer shadow-sm"><input type="radio" name="reward" value="1. 國語生字少一格" data-cost="100" onchange="autoFillPoints(this)" class="mr-3 w-5 h-5 accent-orange-500"><span class="flex-1 font-bold text-gray-700 text-sm">1. 國語生字少一格 <span class="text-orange-500 font-black">(100點)</span></span></label>
                         <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer shadow-sm"><input type="radio" name="reward" value="2. 國語生字少兩格" data-cost="200" onchange="autoFillPoints(this)" class="mr-3 w-5 h-5 accent-orange-500"><span class="flex-1 font-bold text-gray-700 text-sm">2. 國語生字少兩個 <span class="text-orange-500 font-black">(200點)</span></span></label>
@@ -174,7 +218,6 @@
                         <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer shadow-sm"><input type="radio" name="reward" value="9. 兌換文具用品" data-cost="400" onchange="autoFillPoints(this)" class="mr-3 w-5 h-5 accent-orange-500"><span class="flex-1 font-bold text-gray-700 text-sm">9. 兌換文具用品 <span class="text-orange-500 font-black">(400點)</span></span></label>
                         <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer shadow-sm"><input type="radio" name="reward" value="10. 提早打菜+吃飯一次" data-cost="250" onchange="autoFillPoints(this)" class="mr-3 w-5 h-5 accent-orange-500"><span class="flex-1 font-bold text-gray-700 text-sm">10. 提早打菜+吃飯一次 <span class="text-orange-500 font-black">(250點)</span></span></label>
                         <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer shadow-sm"><input type="radio" name="reward" value="11. 圈詞少一遍" data-cost="300" onchange="autoFillPoints(this)" class="mr-3 w-5 h-5 accent-orange-500"><span class="flex-1 font-bold text-gray-700 text-sm">11. 圈詞少一遍 <span class="text-orange-500 font-black">(300點)</span></span></label>
-
                     </div>
                     <div class="mt-2 flex gap-2">
                         <input type="number" id="redeem-point-input" placeholder="扣除點數" class="flex-1 border-2 border-gray-200 p-2 rounded-xl focus:outline-none focus:border-green-400 font-bold text-center bg-gray-50 shadow-inner text-green-700">
@@ -189,6 +232,26 @@
     </div>
 
     <script>
+        // ==========================================
+        // 🌟 左側導覽列 切換功能 (新增三按鈕邏輯)
+        // ==========================================
+        function switchAppTab(tabName) {
+            const tabs = ['main', 'tool', 'tool2'];
+            const activeClass = "flex-1 md:flex-none w-full px-3 py-3 md:py-4 rounded-xl font-black text-white bg-orange-500 shadow-md transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-orange-500 overflow-hidden";
+            const inactiveClass = "flex-1 md:flex-none w-full px-3 py-3 md:py-4 rounded-xl font-bold text-gray-500 bg-gray-50 hover:bg-gray-200 transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-gray-100 overflow-hidden";
+
+            tabs.forEach(t => {
+                document.getElementById(`app-${t}`).classList.add('hidden');
+                document.getElementById(`app-${t}`).classList.remove('flex', 'block');
+                document.getElementById(`nav-tab-${t}`).className = inactiveClass;
+            });
+
+            const activeApp = document.getElementById(`app-${tabName}`);
+            activeApp.classList.remove('hidden');
+            activeApp.classList.add(tabName === 'main' ? 'block' : 'flex');
+            document.getElementById(`nav-tab-${tabName}`).className = activeClass;
+        }
+
         const dailyPointsMap = { 1: 100, 2: 200, 3: 300, 4: 400, 5: 500, 6: 100, 0: 100 };
         const dayNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
         let currentTodayPoints = 0; 
@@ -202,14 +265,25 @@
             '完成': 'bg-blue-100 text-blue-700 border-blue-300'
         };
 
-        let appAnnouncement = localStorage.getItem('classAppAnnouncement') || "🌟 歡迎來到班級專屬入口網！";
+        // ⭐️ 公告資料邏輯更新 (將舊的單一文字公告轉換為有日期的卡片陣列)
+        let appAnnouncements = [];
+        try {
+            let stored = localStorage.getItem('classAppAnnouncements');
+            if (stored) {
+                appAnnouncements = JSON.parse(stored);
+            } else {
+                let legacy = localStorage.getItem('classAppAnnouncement');
+                if(legacy) { appAnnouncements = [{ date: getFormattedTime().split(' ')[0], content: legacy }]; } 
+                else { appAnnouncements = [{ date: getFormattedTime().split(' ')[0], content: "🌟 歡迎來到班級專屬入口網！" }]; }
+            }
+        } catch(e) { appAnnouncements = []; }
+
         let appContactBook = JSON.parse(localStorage.getItem('classAppContactBook')) || [];
-        
         let currentTrackingDate = '';
         let currentTrackingTasks = [];
 
         function getFruitEmoji(id) { return fruits[(id - 1) % fruits.length]; }
-        function getFormattedTime() { const now = new Date(); return `${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`; }
+        function getFormattedTime() { const now = new Date(); return `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`; }
 
         function updateClock() {
             const now = new Date(); const dayOfWeek = now.getDay();
@@ -237,7 +311,7 @@
         async function loadDataFromCloud() {
             const savedData = localStorage.getItem('classAppStudents');
             if (savedData) { students = JSON.parse(savedData); cleanStudentNames(); renderStudents(); }
-            renderAnnouncement(); renderContactBookList(); 
+            renderAnnouncements(); renderContactBookList(); 
             try {
                 const response = await fetch(GOOGLE_SHEET_API_URL);
                 const data = await response.json();
@@ -261,7 +335,6 @@
                 const card = document.createElement('div'); card.id = `student-card-${student.id}`;
                 card.className = "bg-white p-2 md:p-3 rounded-2xl shadow-md cursor-pointer transform transition-all hover:-translate-y-1 flex flex-col items-center border border-gray-100 relative ring-orange-400 hover:ring-2 hover:border-orange-200";
                 card.onclick = () => openModal(student.id);
-                // ⭐️ 這裡已經放大了首頁的圓圈頭像 (w-16 h-16 / md:w-24 md:h-24)，並調整了字體大小與 fallback 防呆機制
                 card.innerHTML = `${warningIcon}<div class="relative w-16 h-16 md:w-24 md:h-24 rounded-full mb-1 bg-orange-50 border-2 md:border-4 border-white shadow-inner flex items-center justify-center select-none overflow-hidden"><img src="images/${student.id}.jpg" loading="lazy" class="w-full h-full object-cover object-top scale-125" onerror="this.outerHTML='<span class=\\'text-4xl md:text-5xl\\'>${getFruitEmoji(student.id)}</span>'"></div><h3 class="font-bold text-gray-800 text-sm md:text-base truncate w-full text-center mt-1">${student.name}</h3><div class="mt-1 bg-orange-100 text-orange-900 px-1 py-0.5 md:py-1 rounded-lg font-black text-xs md:text-sm w-full text-center border border-orange-200 shadow-inner">${student.points}</div>`;
                 grid.appendChild(card);
             });
@@ -284,22 +357,71 @@
         }
 
         // ==========================================
-        // 📢 公告 & 📖 聯絡簿
+        // 📢 全新方格公告系統 (已加入刪除功能與時間排序)
         // ==========================================
-        function renderAnnouncement() { document.getElementById('announcement-display').innerText = appAnnouncement; }
-        function toggleEditAnnouncement() {
-            const display = document.getElementById('announcement-display'); const editor = document.getElementById('announcement-editor');
-            const btnSave = document.getElementById('btn-save-announcement'); const btnEdit = document.getElementById('btn-edit-announcement');
-            editor.value = appAnnouncement; display.classList.add('hidden'); btnEdit.classList.add('hidden');
-            editor.classList.remove('hidden'); btnSave.classList.remove('hidden');
-        }
-        function saveAnnouncement() {
-            appAnnouncement = document.getElementById('announcement-editor').value; localStorage.setItem('classAppAnnouncement', appAnnouncement);
-            document.getElementById('announcement-display').classList.remove('hidden'); document.getElementById('btn-edit-announcement').classList.remove('hidden');
-            document.getElementById('announcement-editor').classList.add('hidden'); document.getElementById('btn-save-announcement').classList.add('hidden');
-            renderAnnouncement();
+        function renderAnnouncements() {
+            const gridEl = document.getElementById('announcement-grid');
+            gridEl.innerHTML = '';
+            if (appAnnouncements.length === 0) {
+                gridEl.innerHTML = `<div class="col-span-1 lg:col-span-3 text-center text-gray-400 py-10 font-bold border-2 border-dashed border-gray-200 rounded-xl text-lg">目前沒有公告喔！</div>`;
+                return;
+            }
+            
+            // ⭐️ 確保日期由舊到新排序
+            appAnnouncements.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+            appAnnouncements.forEach((entry, index) => {
+                gridEl.innerHTML += `
+                    <div class="bg-white p-5 md:p-6 rounded-2xl border-2 border-blue-100 shadow-sm relative group hover:border-blue-300 transition-all flex flex-col h-full">
+                        <div class="absolute top-4 right-4 flex gap-2">
+                            <button onclick="deleteAnnouncement(${index})" class="text-gray-400 bg-gray-50 hover:text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg text-sm font-bold transition-colors border border-gray-100">刪除</button>
+                        </div>
+                        <h3 class="font-black text-blue-800 border-b-2 border-blue-50 pb-2 mb-3 text-lg md:text-xl flex items-center gap-2">🗓️ ${entry.date}</h3>
+                        <div class="text-gray-800 whitespace-pre-wrap leading-relaxed text-xl md:text-2xl font-medium flex-1">${entry.content}</div>
+                    </div>
+                `;
+            });
         }
 
+        function showAddAnnouncement() {
+            document.getElementById('announcement-editor-area').classList.remove('hidden');
+            const today = new Date();
+            document.getElementById('announcement-date-input').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            document.getElementById('announcement-textarea').value = '';
+        }
+
+        function hideAddAnnouncement() {
+            document.getElementById('announcement-editor-area').classList.add('hidden');
+        }
+
+        function saveAnnouncement() {
+            const content = document.getElementById('announcement-textarea').value.trim();
+            const dateVal = document.getElementById('announcement-date-input').value;
+            if(!dateVal) { alert("請選擇日期！"); return; }
+            if(!content) { alert("公告內容不能為空喔！"); return; }
+            
+            appAnnouncements.push({ date: dateVal.replace(/-/g, '/'), content: content });
+            
+            // 儲存前確保排序是由舊到新
+            appAnnouncements.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            
+            localStorage.setItem('classAppAnnouncements', JSON.stringify(appAnnouncements));
+            hideAddAnnouncement();
+            renderAnnouncements();
+        }
+
+        // ⭐️ 刪除公告的專屬函式在這裡！
+        function deleteAnnouncement(index) {
+            if(confirm("確定要刪除這則公告嗎？")) {
+                appAnnouncements.splice(index, 1);
+                localStorage.setItem('classAppAnnouncements', JSON.stringify(appAnnouncements));
+                renderAnnouncements();
+            }
+        }
+
+        // ==========================================
+        // 📖 聯絡簿紀錄
+        // ==========================================
         function renderContactBookList() {
             const listEl = document.getElementById('contact-book-list'); listEl.innerHTML = '';
             if (appContactBook.length === 0) { listEl.innerHTML = `<div class="text-center text-gray-400 py-6 font-bold border-2 border-dashed border-gray-200 rounded-xl text-lg">尚無聯絡簿紀錄，點擊上方新增紀錄！</div>`; return; }
@@ -319,13 +441,11 @@
 
         function showAddContactBook() {
             document.getElementById('contact-book-editor').classList.remove('hidden');
-            
             const today = new Date();
             const yyyy = today.getFullYear();
             const mm = String(today.getMonth() + 1).padStart(2, '0');
             const dd = String(today.getDate()).padStart(2, '0');
             document.getElementById('contact-book-date-input').value = `${yyyy}-${mm}-${dd}`;
-            
             document.getElementById('contact-book-textarea').value = '';
         }
         function hideAddContactBook() { document.getElementById('contact-book-editor').classList.add('hidden'); }
@@ -341,7 +461,6 @@
             const formattedDate = `${selectedDate.getFullYear()}/${(selectedDate.getMonth()+1).toString().padStart(2,'0')}/${selectedDate.getDate().toString().padStart(2,'0')} (${dayNames[selectedDate.getDay()]})`;
 
             appContactBook.unshift({ date: formattedDate, content: content });
-            
             appContactBook.sort((a, b) => b.date.localeCompare(a.date));
 
             localStorage.setItem('classAppContactBook', JSON.stringify(appContactBook));
@@ -507,20 +626,16 @@
 
         function closeInfoModal() {
             document.getElementById('info-modal').classList.add('hidden');
-            document.getElementById('announcement-display').classList.remove('hidden'); document.getElementById('btn-edit-announcement').classList.remove('hidden');
-            document.getElementById('announcement-editor').classList.add('hidden'); document.getElementById('btn-save-announcement').classList.add('hidden');
+            hideAddAnnouncement();
         }
 
         function openEnlargeModal(type, index = null) {
             const modal = document.getElementById('enlarge-modal'); const header = document.getElementById('enlarge-header');
             const box = document.getElementById('enlarge-box'); const titleEl = document.getElementById('enlarge-title'); const contentEl = document.getElementById('enlarge-content');
-            modal.className = 'fixed inset-0 z-50 flex flex-col transition-colors duration-300';
+            modal.className = 'fixed inset-0 z-[60] flex flex-col transition-colors duration-300';
             header.className = 'flex justify-between items-center p-4 md:p-6 text-white shadow-lg';
             
-            if (type === 'announcement') {
-                modal.classList.add('bg-blue-50'); header.classList.add('bg-blue-700'); box.classList.add('border-blue-200');
-                titleEl.innerText = '📢 班級公告'; contentEl.innerText = appAnnouncement;
-            } else if (type === 'homework') {
+            if (type === 'homework') {
                 const entry = appContactBook[index];
                 modal.classList.add('bg-green-50'); header.classList.add('bg-green-700'); box.classList.add('border-green-200');
                 titleEl.innerText = `🗓️ ${entry.date}`; contentEl.innerText = entry.content;
@@ -535,7 +650,6 @@
             currentSelectedStudentId = studentId; const student = students.find(s => s.id === studentId);
             document.getElementById('modal-name').innerText = student.name; document.getElementById('modal-points').innerText = student.points;
             
-            // ⭐️ 彈出視窗的大頭像也加入了防呆機制與放大參數
             document.getElementById('modal-avatar').classList.add('overflow-hidden');
             document.getElementById('modal-avatar').innerHTML = `<img src="images/${student.id}.jpg" class="w-full h-full object-cover object-top scale-125" onerror="this.outerHTML='<span class=\\'text-6xl md:text-7xl\\'>${getFruitEmoji(student.id)}</span>'">`;
             
@@ -543,12 +657,12 @@
             document.getElementById('redeem-point-input').value = ''; 
             document.querySelectorAll('input[name="reward"]').forEach(radio => radio.checked = false);
             
-            renderHistoryList(student); renderRedeemHistoryList(student); renderPointHistoryList(student); switchTab('add'); 
+            renderHistoryList(student); renderRedeemHistoryList(student); renderPointHistoryList(student); switchTabAction('add'); 
             document.getElementById('action-modal').classList.remove('hidden');
         }
         function closeModal() { document.getElementById('action-modal').classList.add('hidden'); currentSelectedStudentId = null; }
 
-        function switchTab(tab) {
+        function switchTabAction(tab) {
             const sections = ['add', 'redeem', 'history', 'redeem-history', 'point-history'];
             sections.forEach(s => {
                 const secEl = document.getElementById(`section-${s}`); const tabEl = document.getElementById(`tab-${s}`);
@@ -606,14 +720,35 @@
             const student = students.find(s => s.id === currentSelectedStudentId); student.pointHistory.push(`[${getFormattedTime()}] 手動調整 (${pts >= 0 ? '+' : ''}${pts}點)`);
             updateStudentPoints(currentSelectedStudentId, pts); closeModal();
         }
-
-        function submitRedemption() {
+        
+       // ⭐️ 數字鍵盤的專屬邏輯
+        function appendNumpad(val) {
+            const input = document.getElementById('custom-point-input');
+            if (val === 'backspace') {
+                input.value = input.value.toString().slice(0, -1);
+            } else if (val === '-') {
+                if (input.value.includes('-')) {
+                    input.value = input.value.replace('-', '');
+                } else {
+                    input.value = '-' + input.value;
+                }
+            } else {
+                input.value += val;
+            }
+        }
+        
+       // ⭐️ 兌換獎勵不再跳出成功視窗
+       function submitRedemption() {
             const selected = document.querySelector('input[name="reward"]:checked'); if (!selected) { alert("請先選擇兌換項目！"); return; }
             const cost = parseInt(document.getElementById('redeem-point-input').value); if (isNaN(cost) || cost <= 0) { alert("請輸入扣除點數！"); return; }
             const student = students.find(s => s.id === currentSelectedStudentId); if (student.points < cost) { alert(`點數不足！還差 ${cost - student.points} 點。`); return; }
+            
             if (confirm(`確定花 ${cost} 點兌換「${selected.value}」嗎？`)) {
-                const timeStr = getFormattedTime(); student.redeemHistory.push(`[${timeStr}] 兌換 <b>${selected.value}</b>`); student.pointHistory.push(`[${timeStr}] 兌換獎勵 (-${cost}點)`);
-                updateStudentPoints(currentSelectedStudentId, -cost); alert("🎉 兌換成功！"); closeModal();
+                const timeStr = getFormattedTime(); 
+                student.redeemHistory.push(`[${timeStr}] 兌換 <b>${selected.value}</b>`); 
+                student.pointHistory.push(`[${timeStr}] 兌換獎勵 (-${cost}點)`);
+                updateStudentPoints(currentSelectedStudentId, -cost); 
+                closeModal(); 
             }
         }
 
