@@ -245,7 +245,6 @@
                 <button onclick="switchTabAction('redeem')" id="tab-redeem" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換獎勵</button>
                 <button onclick="switchTabAction('point-history')" id="tab-point-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">加扣紀錄</button>
                 <button onclick="switchTabAction('history')" id="tab-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">遲到紀錄</button>
-                <button onclick="switchTabAction('redeem-history')" id="tab-redeem-history" class="px-2 py-2 text-gray-500 font-bold hover:text-orange-600 transition-colors">兌換紀錄</button>
             </div>
 
             <div class="flex-1 overflow-y-auto hide-scrollbar pb-2">
@@ -288,7 +287,6 @@
                 
                 <div id="section-point-history" class="hidden"><div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner"><ul id="point-history-list" class="space-y-2"></ul></div></div>
                 <div id="section-history" class="hidden"><div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner"><ul id="late-history-list" class="space-y-2"></ul></div></div>
-                <div id="section-redeem-history" class="hidden"><div class="bg-gray-50 border rounded-xl p-3 h-48 overflow-y-auto hide-scrollbar shadow-inner"><ul id="redeem-history-list" class="space-y-2"></ul></div></div>
             </div>
         </div>
     </div>
@@ -415,8 +413,6 @@
                         const localS = localStudents.find(s => s.id === cloudStudent.id);
                         if (localS) {
                             if (localS.avatar) cloudStudent.avatar = localS.avatar;
-                            
-                            // 防禦魔法：如果 Google 雲端把紀錄弄丟了，強制用電腦本地端補回
                             if (!cloudStudent.pointHistory) cloudStudent.pointHistory = localS.pointHistory || [];
                             if (!cloudStudent.redeemHistory) cloudStudent.redeemHistory = localS.redeemHistory || [];
                             if (!cloudStudent.lateDates) cloudStudent.lateDates = localS.lateDates || [];
@@ -425,7 +421,7 @@
                     });
                     
                     students = data; 
-                    cleanStudentNames(); // 確保格式全部正確
+                    cleanStudentNames(); 
                     localStorage.setItem('classAppStudents', JSON.stringify(students)); 
                 }
                 renderStudents(); 
@@ -434,7 +430,6 @@
 
         // ⭐️ 終極防護：儲存資料到雲端
         function saveDataToCloud() {
-            // 安全瘦身：加入 Array 判斷，絕對不會再把字串切壞
             students.forEach(s => {
                 if (Array.isArray(s.pointHistory) && s.pointHistory.length > 50) s.pointHistory = s.pointHistory.slice(-50);
                 if (Array.isArray(s.redeemHistory) && s.redeemHistory.length > 50) s.redeemHistory = s.redeemHistory.slice(-50);
@@ -867,13 +862,14 @@
             document.getElementById('redeem-point-input').value = ''; 
             document.querySelectorAll('input[name="reward"]').forEach(radio => radio.checked = false);
             
-            renderHistoryList(student); renderRedeemHistoryList(student); renderPointHistoryList(student); switchTabAction('add'); 
+            renderHistoryList(student); renderPointHistoryList(student); switchTabAction('add'); 
             document.getElementById('action-modal').classList.remove('hidden');
         }
         function closeModal() { document.getElementById('action-modal').classList.add('hidden'); currentSelectedStudentId = null; }
 
         function switchTabAction(tab) {
-            const sections = ['add', 'redeem', 'history', 'redeem-history', 'point-history'];
+            // ⭐️ 移除了 'redeem-history' 的陣列
+            const sections = ['add', 'redeem', 'history', 'point-history'];
             sections.forEach(s => {
                 const secEl = document.getElementById(`section-${s}`); const tabEl = document.getElementById(`tab-${s}`);
                 if (s === tab) {
@@ -907,12 +903,6 @@
         }
         function deleteLateRecord(index) {
             if(confirm("確定消除這筆遲到紀錄嗎？")) { const student = students.find(s => s.id === currentSelectedStudentId); student.lateDates.splice(index, 1); renderHistoryList(student); renderStudents(); saveDataToCloud(); }
-        }
-
-        function renderRedeemHistoryList(student) {
-            const listEl = document.getElementById('redeem-history-list'); listEl.innerHTML = '';
-            if (!student.redeemHistory || student.redeemHistory.length === 0) { listEl.innerHTML = `<li class="text-center text-gray-400 font-bold py-6">目前還沒有兌換過獎勵喔！</li>`; return; }
-            [...student.redeemHistory].reverse().forEach((recordStr) => { listEl.innerHTML += `<li class="flex items-start text-xs md:text-sm p-2 bg-white rounded border border-blue-100 text-blue-800 mb-1"><span class="mr-2 mt-0.5">🎁</span> <span>${recordStr}</span></li>`; });
         }
 
         function quickAdd(type) {
@@ -950,8 +940,8 @@
             
             if (confirm(`確定花 ${cost} 點兌換「${selected.value}」嗎？`)) {
                 const timeStr = getFormattedTime(); 
-                student.redeemHistory.push(`[${timeStr}] 兌換 <b>${selected.value}</b>`); 
-                student.pointHistory.push(`[${timeStr}] 兌換獎勵 (-${cost}點)`);
+                // ⭐️ 兌換獎勵直接寫入統一的 pointHistory 帳本裡！
+                student.pointHistory.push(`[${timeStr}] 🛍️ 兌換：${selected.value} (-${cost}點)`);
                 updateStudentPoints(currentSelectedStudentId, -cost); 
                 closeModal(); 
             }
