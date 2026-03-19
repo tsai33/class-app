@@ -997,7 +997,8 @@
 
         function openCountdownSettings() {
             document.getElementById('input-event-name').value = countdownData.name !== '目標' ? countdownData.name : '';
-            document.getElementById('input-event-date').value = countdownData.date;\r\n            document.getElementById('countdown-setting-modal').classList.remove('hidden');
+            document.getElementById('input-event-date').value = countdownData.date;
+            document.getElementById('countdown-setting-modal').classList.remove('hidden');
         }
         function closeCountdownSettings() { document.getElementById('countdown-setting-modal').classList.add('hidden'); }
         function saveCountdownSettings() {
