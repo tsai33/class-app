@@ -55,18 +55,20 @@
                         <p class="text-sm md:text-base text-gray-600 font-medium" id="today-point-info">讀取中...</p>
                     </div>
                     
-                    <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full lg:w-auto justify-center lg:justify-end">
-                        <button onclick="openCountdownSettings()" class="flex-1 md:flex-none bg-rose-100 text-rose-700 font-bold px-3 py-2 rounded-xl hover:bg-rose-200 active:scale-95 transition-all shadow-sm flex flex-col items-center justify-center min-w-[100px]">
-                            <span id="display-event-name" class="text-xs md:text-sm opacity-80">距離 目標</span>
-                            <div class="flex items-baseline gap-1">
-                                <span id="display-countdown-days" class="text-lg md:text-xl font-black">--</span>
-                                <span class="text-xs md:text-sm">天</span>
+                    <div class="grid grid-cols-2 md:flex md:flex-wrap items-stretch gap-2 md:gap-3 w-full lg:w-auto justify-center lg:justify-end">
+                        
+                        <button onclick="openCountdownSettings()" class="col-span-2 md:col-auto bg-white px-3 py-2 md:px-4 md:py-3 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:bg-rose-50 hover:border-rose-200 transition-all flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center min-w-[120px]">
+                            <span id="display-event-name" class="text-gray-600 text-sm md:text-base font-bold whitespace-nowrap">距離 目標</span>
+                            <div class="flex items-baseline gap-1 whitespace-nowrap">
+                                <span id="display-countdown-days" class="text-3xl md:text-4xl font-black text-rose-500 drop-shadow-sm">--</span>
+                                <span class="text-gray-500 text-xs md:text-sm font-bold">天</span>
                             </div>
                         </button>
-                        <button onclick="openInfoModal('announcement')" class="flex-1 md:flex-none bg-blue-100 text-blue-700 font-bold px-3 py-3 rounded-xl hover:bg-blue-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">📢</span> <span class="text-sm md:text-base">公告</span></button>
-                        <button onclick="openInfoModal('homework')" class="flex-1 md:flex-none bg-green-100 text-green-700 font-bold px-3 py-3 rounded-xl hover:bg-green-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">📖</span> <span class="text-sm md:text-base">聯絡簿</span></button>
-                        <button onclick="openInfoModal('tracking')" class="flex-1 md:flex-none bg-purple-100 text-purple-700 font-bold px-3 py-3 rounded-xl hover:bg-purple-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">✅</span> <span class="text-sm md:text-base">作業追蹤</span></button>
-                        <button id="btn-random-draw" onclick="randomDraw()" class="w-full md:w-auto bg-yellow-400 text-yellow-950 font-extrabold px-4 py-3 rounded-xl hover:bg-yellow-500 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1"><span class="text-xl">🎲</span> <span>抽籤</span></button>
+
+                        <button onclick="openInfoModal('announcement')" class="bg-blue-100 text-blue-700 font-bold px-2 py-3 md:px-3 rounded-xl hover:bg-blue-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">📢</span> <span class="text-sm md:text-base whitespace-nowrap">公告</span></button>
+                        <button onclick="openInfoModal('homework')" class="bg-green-100 text-green-700 font-bold px-2 py-3 md:px-3 rounded-xl hover:bg-green-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">📖</span> <span class="text-sm md:text-base whitespace-nowrap">聯絡簿</span></button>
+                        <button onclick="openInfoModal('tracking')" class="bg-purple-100 text-purple-700 font-bold px-2 py-3 md:px-3 rounded-xl hover:bg-purple-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">✅</span> <span class="text-sm md:text-base whitespace-nowrap">作業追蹤</span></button>
+                        <button id="btn-random-draw" onclick="randomDraw()" class="bg-yellow-400 text-yellow-950 font-extrabold px-2 py-3 md:px-4 rounded-xl hover:bg-yellow-500 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1"><span class="text-xl">🎲</span> <span class="whitespace-nowrap">抽籤</span></button>
                     </div>
                 </div>
                 <div id="student-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4 md:gap-5"></div>
@@ -90,17 +92,18 @@
             <div id="info-content-announcement" class="hidden flex-1 overflow-y-auto hide-scrollbar mt-2 max-w-5xl mx-auto w-full">
                 <div class="flex justify-between items-center mb-4 pr-8">
                     <h2 class="text-2xl font-black text-blue-700 flex items-center gap-2">📢 班級公告牆</h2>
-                    <button onclick="showAddAnnouncement()" class="text-sm bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-200 font-bold transition-colors shadow-sm">➕ 新增公告</button>
+                    <button onclick="showAddAnnouncement()" class="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-bold transition-colors shadow-sm">➕ 新增公告</button>
                 </div>
                 
-                <div id="announcement-editor-area" class="hidden mb-5 bg-blue-50 p-4 rounded-xl border-2 border-blue-200 shadow-inner">
+                <div id="announcement-editor-area" class="hidden mb-5 bg-blue-50 p-5 rounded-xl border-2 border-blue-200 shadow-inner">
                     <div class="font-bold text-blue-800 mb-2 flex items-center gap-2">
-                        <span class="text-lg">🗓️ 日期：</span>
+                        <span class="text-lg">🗓️ 顯示/過期日期：</span>
                         <input type="date" id="announcement-date-input" class="border-2 border-blue-200 rounded-lg p-1.5 focus:outline-none focus:border-blue-400 bg-white text-blue-900 cursor-pointer shadow-sm text-base font-bold">
+                        <span class="text-xs text-blue-500 hidden md:inline ml-2">(超過此日期系統將自動隱藏刪除)</span>
                     </div>
                     <textarea id="announcement-textarea" placeholder="請輸入公告內容..." class="w-full h-32 border border-blue-200 rounded-lg p-4 mt-2 mb-4 focus:outline-none focus:border-blue-400 bg-white leading-relaxed text-lg"></textarea>
                     <div class="flex gap-2">
-                        <button onclick="saveAnnouncement()" class="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 shadow-sm text-lg">發布公告</button>
+                        <button onclick="saveAnnouncement()" class="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 shadow-sm text-lg">💾 儲存發布</button>
                         <button onclick="hideAddAnnouncement()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-400 text-lg">取消</button>
                     </div>
                 </div>
@@ -295,7 +298,7 @@
             '完成': 'bg-blue-100 text-blue-700 border-blue-300'
         };
 
-        // ⭐️ 動態獎勵清單 (含完整 11 個預設獎品)
+        // ⭐️ 動態獎勵清單
         let appRewards = JSON.parse(localStorage.getItem('classAppRewards')) || [
             { name: "國語生字少一格", cost: 100 },
             { name: "國語生字少兩格", cost: 200 },
@@ -317,7 +320,14 @@
             else { appAnnouncements = [{ date: getFormattedTime().split(' ')[0], content: "🌟 歡迎來到班級專屬入口網！" }]; }
         } catch(e) { appAnnouncements = []; }
 
+        // ⭐️ 紀錄目前編輯的公告索引
+        let currentEditAnnouncementIndex = -1;
+
         let appContactBook = JSON.parse(localStorage.getItem('classAppContactBook')) || [];
+        
+        // ⭐️ 新增這行：用來記錄目前正在編輯哪一天的聯絡簿
+        let currentEditContactBookIndex = -1; 
+        
         let currentTrackingDate = '';
         let currentTrackingTasks = [];
         
@@ -455,7 +465,7 @@
 
 
         // ==========================================
-        // 核心顯示邏輯 (已加入頭像判斷)
+        // 核心顯示邏輯
         // ==========================================
         function renderStudents() {
             const grid = document.getElementById('student-grid'); grid.innerHTML = ''; 
@@ -487,18 +497,30 @@
                 document.getElementById(`student-card-${rStudent.id}`)?.classList.add('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-xl');
                 times++;
                 if (times >= maxTimes) {
-                    clearInterval(interval); btn.disabled = false; btn.innerHTML = `<span class="text-xl">🎲</span> <span>抽籤</span>`;
+                    clearInterval(interval); btn.disabled = false; btn.innerHTML = `<span class="text-xl">🎲</span> <span class="whitespace-nowrap">抽籤</span>`;
                     setTimeout(() => { students.forEach(s => document.getElementById(`student-card-${s.id}`)?.classList.remove('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-xl')); openModal(rStudent.id); }, 500); 
                 }
             }, 100); 
         }
 
         // ==========================================
-        // 📢 公告系統 (由舊到新，字體大，顯示三行)
+        // 📢 智慧公告系統 (自動過期刪除、星期幾、編輯功能)
         // ==========================================
         function renderAnnouncements() {
+            // ⭐️ 修正時間比較魔法：改用純字串比較，徹底解決時區導致「今天」被誤刪的 Bug
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
+            
+            const originalLength = appAnnouncements.length;
+            appAnnouncements = appAnnouncements.filter(entry => entry.date >= todayStr);
+
+            if (appAnnouncements.length !== originalLength) {
+                localStorage.setItem('classAppAnnouncements', JSON.stringify(appAnnouncements));
+            }
+
             const gridEl = document.getElementById('announcement-grid');
             gridEl.innerHTML = '';
+            
             if (appAnnouncements.length === 0) {
                 gridEl.innerHTML = `<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-400 py-10 font-bold border-2 border-dashed border-gray-200 rounded-xl text-lg">目前沒有公告喔！</div>`;
                 return;
@@ -507,12 +529,16 @@
             appAnnouncements.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
             appAnnouncements.forEach((entry, index) => {
+                const d = new Date(entry.date);
+                const dayStr = isNaN(d) ? '' : ` (${dayNames[d.getDay()]})`;
+
                 gridEl.innerHTML += `
                     <div class="bg-white p-5 md:p-6 rounded-2xl border-2 border-blue-100 shadow-sm relative group hover:border-blue-300 transition-all flex flex-col h-full">
                         <div class="absolute top-4 right-4 flex gap-2">
-                            <button onclick="deleteAnnouncement(${index})" class="text-gray-400 bg-gray-50 hover:text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg text-sm font-bold transition-colors border border-gray-100">刪除</button>
+                            <button onclick="editAnnouncement(${index})" class="text-blue-600 bg-blue-50 hover:text-blue-800 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-sm font-bold transition-colors border border-blue-100 shadow-sm">編輯</button>
+                            <button onclick="deleteAnnouncement(${index})" class="text-gray-400 bg-gray-50 hover:text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg text-sm font-bold transition-colors border border-gray-100 shadow-sm">刪除</button>
                         </div>
-                        <h3 class="font-black text-blue-800 border-b-2 border-blue-50 pb-2 mb-3 text-lg md:text-xl flex items-center gap-2">🗓️ ${entry.date}</h3>
+                        <h3 class="font-black text-blue-800 border-b-2 border-blue-50 pb-2 mb-3 text-lg md:text-xl flex items-center gap-2 pr-28 leading-snug">🗓️ ${entry.date}${dayStr}</h3>
                         <div class="text-gray-800 whitespace-pre-wrap leading-relaxed text-xl md:text-2xl font-medium flex-1 line-clamp-3">${entry.content}</div>
                     </div>
                 `;
@@ -520,6 +546,7 @@
         }
 
         function showAddAnnouncement() {
+            currentEditAnnouncementIndex = -1; // -1 代表新增模式
             document.getElementById('announcement-editor-area').classList.remove('hidden');
             const today = new Date();
             document.getElementById('announcement-date-input').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
@@ -528,6 +555,15 @@
 
         function hideAddAnnouncement() {
             document.getElementById('announcement-editor-area').classList.add('hidden');
+            currentEditAnnouncementIndex = -1;
+        }
+
+        function editAnnouncement(index) {
+            currentEditAnnouncementIndex = index;
+            const entry = appAnnouncements[index];
+            document.getElementById('announcement-editor-area').classList.remove('hidden');
+            document.getElementById('announcement-date-input').value = entry.date.replace(/\//g, '-');
+            document.getElementById('announcement-textarea').value = entry.content;
         }
 
         function saveAnnouncement() {
@@ -536,10 +572,18 @@
             if(!dateVal) { alert("請選擇日期！"); return; }
             if(!content) { alert("公告內容不能為空喔！"); return; }
             
-            appAnnouncements.push({ date: dateVal.replace(/-/g, '/'), content: content });
-            appAnnouncements.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            const formattedDate = dateVal.replace(/-/g, '/');
             
+            if (currentEditAnnouncementIndex !== -1) {
+                appAnnouncements[currentEditAnnouncementIndex] = { date: formattedDate, content: content };
+                currentEditAnnouncementIndex = -1; 
+            } else {
+                appAnnouncements.push({ date: formattedDate, content: content });
+            }
+            
+            appAnnouncements.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
             localStorage.setItem('classAppAnnouncements', JSON.stringify(appAnnouncements));
+            
             hideAddAnnouncement();
             renderAnnouncements();
         }
@@ -553,7 +597,7 @@
         }
 
         // ==========================================
-        // 📖 聯絡簿紀錄
+        // 📖 聯絡簿紀錄 (加入編輯功能)
         // ==========================================
         function renderContactBookList() {
             const listEl = document.getElementById('contact-book-list'); listEl.innerHTML = '';
@@ -562,10 +606,11 @@
                 listEl.innerHTML += `
                     <div class="bg-white p-5 md:p-6 rounded-2xl border border-green-100 shadow-sm relative group">
                         <div class="absolute top-4 right-4 flex gap-2">
+                            <button onclick="editContactBook(${index})" class="text-green-700 hover:text-green-900 text-sm md:text-base font-bold bg-green-100 hover:bg-green-200 px-3 py-1.5 rounded-lg transition-colors flex items-center shadow-sm">編輯</button>
                             <button onclick="openEnlargeModal('homework', ${index})" class="text-green-700 hover:text-green-900 text-sm md:text-base font-bold bg-green-100 hover:bg-green-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shadow-sm">🔍 <span class="hidden md:inline">放大</span></button>
-                            <button onclick="deleteContactBook(${index})" class="text-gray-400 hover:text-red-500 text-sm md:text-base font-bold bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 transition-colors">刪除</button>
+                            <button onclick="deleteContactBook(${index})" class="text-gray-400 hover:text-red-500 text-sm md:text-base font-bold bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 transition-colors shadow-sm">刪除</button>
                         </div>
-                        <h3 class="font-bold text-green-800 border-b border-green-100 pb-3 mb-4 text-xl md:text-2xl">🗓️ ${entry.date}</h3>
+                        <h3 class="font-bold text-green-800 border-b border-green-100 pb-3 mb-4 text-xl md:text-2xl pr-40 leading-snug">🗓️ ${entry.date}</h3>
                         <div class="text-gray-800 whitespace-pre-wrap leading-relaxed text-lg md:text-xl font-medium">${entry.content}</div>
                     </div>
                 `;
@@ -573,6 +618,7 @@
         }
 
         function showAddContactBook() {
+            currentEditContactBookIndex = -1; // ⭐️ -1 代表現在是「新增模式」
             document.getElementById('contact-book-editor').classList.remove('hidden');
             const today = new Date();
             const yyyy = today.getFullYear();
@@ -581,7 +627,23 @@
             document.getElementById('contact-book-date-input').value = `${yyyy}-${mm}-${dd}`;
             document.getElementById('contact-book-textarea').value = '';
         }
-        function hideAddContactBook() { document.getElementById('contact-book-editor').classList.add('hidden'); }
+
+        function hideAddContactBook() { 
+            document.getElementById('contact-book-editor').classList.add('hidden'); 
+            currentEditContactBookIndex = -1; // 清除狀態
+        }
+
+        // ⭐️ 全新功能：點擊編輯聯絡簿
+        function editContactBook(index) {
+            currentEditContactBookIndex = index; // 記住現在編輯的是哪一筆
+            const entry = appContactBook[index];
+            document.getElementById('contact-book-editor').classList.remove('hidden');
+            
+            // 將 "2026/03/19 (星期四)" 轉回 "2026-03-19" 給輸入框使用
+            const dateOnly = entry.date.split(' ')[0].replace(/\//g, '-');
+            document.getElementById('contact-book-date-input').value = dateOnly;
+            document.getElementById('contact-book-textarea').value = entry.content;
+        }
         
         function saveContactBook() {
             const content = document.getElementById('contact-book-textarea').value.trim();
@@ -593,18 +655,35 @@
             const selectedDate = new Date(dateVal);
             const formattedDate = `${selectedDate.getFullYear()}/${(selectedDate.getMonth()+1).toString().padStart(2,'0')}/${selectedDate.getDate().toString().padStart(2,'0')} (${dayNames[selectedDate.getDay()]})`;
 
-            appContactBook.unshift({ date: formattedDate, content: content });
+            // ⭐️ 判斷是新增還是編輯
+            if (currentEditContactBookIndex !== -1) {
+                appContactBook[currentEditContactBookIndex] = { date: formattedDate, content: content };
+                currentEditContactBookIndex = -1;
+            } else {
+                appContactBook.unshift({ date: formattedDate, content: content });
+            }
+
+            // 存檔前確保時間由新到舊排序
             appContactBook.sort((a, b) => b.date.localeCompare(a.date));
 
             localStorage.setItem('classAppContactBook', JSON.stringify(appContactBook));
-            hideAddContactBook(); renderContactBookList();
-            if(!document.getElementById('info-content-tracking').classList.contains('hidden')){ populateTrackingDates(); renderTracking(); }
+            hideAddContactBook(); 
+            renderContactBookList();
+            
+            // 同步更新作業追蹤表
+            if(!document.getElementById('info-content-tracking').classList.contains('hidden')){ 
+                populateTrackingDates(); 
+                renderTracking(); 
+            }
         }
+
         function deleteContactBook(index) {
             if(confirm("確定要刪除這天的聯絡簿紀錄嗎？")) { 
                 appContactBook.splice(index, 1); 
                 localStorage.setItem('classAppContactBook', JSON.stringify(appContactBook)); 
-                renderContactBookList(); populateTrackingDates(); renderTracking();
+                renderContactBookList(); 
+                populateTrackingDates(); 
+                renderTracking();
             }
         }
 
@@ -777,7 +856,7 @@
         function closeEnlargeModal() { document.getElementById('enlarge-modal').classList.add('hidden'); document.getElementById('enlarge-modal').classList.remove('flex'); }
 
         // ==========================================
-        // 學生操作視窗區塊 (加入讀取相機大頭貼)
+        // 學生操作視窗區塊
         // ==========================================
         function openModal(studentId) {
             currentSelectedStudentId = studentId; const student = students.find(s => s.id === studentId);
