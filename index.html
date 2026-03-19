@@ -375,6 +375,15 @@
                 const response = await fetch(GOOGLE_SHEET_API_URL);
                 const data = await response.json();
                 if (data && data.length > 0) {
+                    // ⭐️ 分流魔法：把雲端抓下來的點數，跟本地端存的「照片」安全合併
+                    const localStudents = JSON.parse(localStorage.getItem('classAppStudents') || '[]');
+                    data.forEach(cloudStudent => {
+                        const localS = localStudents.find(s => s.id === cloudStudent.id);
+                        if (localS && localS.avatar) {
+                            cloudStudent.avatar = localS.avatar; // 保留本地端的專屬大頭貼
+                        }
+                    });
+                    
                     students = data; 
                     cleanStudentNames();
                     localStorage.setItem('classAppStudents', JSON.stringify(students)); 
@@ -384,8 +393,20 @@
         }
 
         function saveDataToCloud() {
+            // 先存一份有完整照片的版本在本地電腦 (保護照片)
             localStorage.setItem('classAppStudents', JSON.stringify(students));
-            fetch(GOOGLE_SHEET_API_URL, { method: "POST", body: JSON.stringify(students) }).catch(err => console.error(err));
+            
+            // ⭐️ 分流魔法：建立一個「沒有照片」的乾淨版本準備上傳雲端，避免塞爆 Google 表格
+            const cloudStudents = students.map(s => {
+                const { avatar, ...rest } = s; // 把 avatar 抽掉
+                return rest;
+            });
+            
+            // 上傳「乾淨版本」到雲端 (只存點數跟文字紀錄)
+            fetch(GOOGLE_SHEET_API_URL, { 
+                method: "POST", 
+                body: JSON.stringify(cloudStudents) 
+            }).catch(err => console.error(err));
         }
 
         // ==========================================
