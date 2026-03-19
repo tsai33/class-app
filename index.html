@@ -266,12 +266,13 @@
 
     <script>
         // ==========================================
-        // 🌟 左側導覽列 切換功能
+        // 🌟 左側導覽列 切換功能 (已修正 Class 覆蓋問題)
         // ==========================================
         function switchAppTab(tabName) {
             const tabs = ['main', 'tool', 'tool2'];
-            const activeClass = "flex-1 md:flex-none w-full px-3 py-3 md:py-4 rounded-xl font-black text-white bg-orange-500 shadow-md transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-orange-500 overflow-hidden";
-            const inactiveClass = "flex-1 md:flex-none w-full px-3 py-3 md:py-4 rounded-xl font-bold text-gray-500 bg-gray-50 hover:bg-gray-200 transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-gray-100 overflow-hidden";
+            // ⭐️ 更新了這裡的 Class，加入了 flex-shrink-0, w-auto, whitespace-nowrap 確保手機版不跑位
+            const activeClass = "flex-shrink-0 md:flex-none w-auto md:w-full px-4 py-3 md:py-4 rounded-xl font-black text-white bg-orange-500 shadow-md transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-orange-500 overflow-hidden whitespace-nowrap";
+            const inactiveClass = "flex-shrink-0 md:flex-none w-auto md:w-full px-4 py-3 md:py-4 rounded-xl font-bold text-gray-500 bg-gray-50 hover:bg-gray-200 transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-gray-100 overflow-hidden whitespace-nowrap";
 
             tabs.forEach(t => {
                 document.getElementById(`app-${t}`).classList.add('hidden');
@@ -860,6 +861,7 @@
         function closeInfoModal() {
             document.getElementById('info-modal').classList.add('hidden');
             hideAddAnnouncement();
+            hideAddContactBook(); // ⭐️ 新增這行：確保關閉視窗時，聯絡簿編輯區也會跟著收起來
         }
 
         function openEnlargeModal(type, index = null) {
@@ -955,9 +957,19 @@
         }
 
         function submitCustomPoints() {
-            const pts = parseInt(document.getElementById('custom-point-input').value); if (isNaN(pts)) { alert("請輸入有效的數字！"); return; }
-            const student = students.find(s => s.id === currentSelectedStudentId); student.pointHistory.push(`[${getFormattedTime()}] 手動調整 (${pts >= 0 ? '+' : ''}${pts}點)`);
-            updateStudentPoints(currentSelectedStudentId, pts); closeModal();
+            const inputVal = document.getElementById('custom-point-input').value;
+            const pts = parseInt(inputVal); 
+            
+            // ⭐️ 防呆機制：如果沒輸入、輸入非數字、或是輸入包含小數點，就阻擋並跳出警告
+            if (isNaN(pts) || inputVal.includes('.')) { 
+                alert("⚠️ 請輸入有效的整數！(不可包含小數點)"); 
+                return; 
+            }
+
+            const student = students.find(s => s.id === currentSelectedStudentId); 
+            student.pointHistory.push(`[${getFormattedTime()}] 手動調整 (${pts >= 0 ? '+' : ''}${pts}點)`);
+            updateStudentPoints(currentSelectedStudentId, pts); 
+            closeModal();
         }
         
         function appendNumpad(val) {
