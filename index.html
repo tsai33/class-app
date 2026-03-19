@@ -373,15 +373,25 @@
 
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx1mardakIchiA3CCZRvJq6FmEOMQ9uGIh3Y2DXTfr-smItfTjJLJFjGwHP7oh2pxMs/exec";
 
+        // ⭐️ 終極防護：資料修復與正規化
         function cleanStudentNames() {
             students.forEach(s => {
-                if (!s.pointHistory) s.pointHistory = [];
-                if (!s.lateDates) s.lateDates = [];
-                if (!s.redeemHistory) s.redeemHistory = [];
-                if (!s.homework) s.homework = {}; 
+                ['pointHistory', 'lateDates', 'redeemHistory'].forEach(key => {
+                    if (typeof s[key] === 'string') {
+                        try { s[key] = JSON.parse(s[key]); } 
+                        catch(e) { s[key] = []; }
+                    }
+                    if (!Array.isArray(s[key])) s[key] = [];
+                });
+
+                if (typeof s.homework === 'string') {
+                    try { s.homework = JSON.parse(s.homework); } catch(e) { s.homework = {}; }
+                }
+                if (!s.homework || typeof s.homework !== 'object') s.homework = {}; 
             });
         }
 
+        // ⭐️ 終極防護：從雲端讀取資料
         async function loadDataFromCloud() {
             const savedData = localStorage.getItem('classAppStudents');
             if (savedData) { 
@@ -403,22 +413,31 @@
                     const localStudents = JSON.parse(localStorage.getItem('classAppStudents') || '[]');
                     data.forEach(cloudStudent => {
                         const localS = localStudents.find(s => s.id === cloudStudent.id);
-                        if (localS && localS.avatar) { cloudStudent.avatar = localS.avatar; }
+                        if (localS) {
+                            if (localS.avatar) cloudStudent.avatar = localS.avatar;
+                            
+                            // 防禦魔法：如果 Google 雲端把紀錄弄丟了，強制用電腦本地端補回
+                            if (!cloudStudent.pointHistory) cloudStudent.pointHistory = localS.pointHistory || [];
+                            if (!cloudStudent.redeemHistory) cloudStudent.redeemHistory = localS.redeemHistory || [];
+                            if (!cloudStudent.lateDates) cloudStudent.lateDates = localS.lateDates || [];
+                            if (!cloudStudent.homework) cloudStudent.homework = localS.homework || {};
+                        }
                     });
                     
                     students = data; 
-                    cleanStudentNames();
+                    cleanStudentNames(); // 確保格式全部正確
                     localStorage.setItem('classAppStudents', JSON.stringify(students)); 
                 }
                 renderStudents(); 
             } catch (error) { console.log("雲端連線失敗，使用本地資料"); }
         }
 
+        // ⭐️ 終極防護：儲存資料到雲端
         function saveDataToCloud() {
-            // 自動瘦身：避免長期使用容量爆表
+            // 安全瘦身：加入 Array 判斷，絕對不會再把字串切壞
             students.forEach(s => {
-                if (s.pointHistory && s.pointHistory.length > 50) s.pointHistory = s.pointHistory.slice(-50);
-                if (s.redeemHistory && s.redeemHistory.length > 50) s.redeemHistory = s.redeemHistory.slice(-50);
+                if (Array.isArray(s.pointHistory) && s.pointHistory.length > 50) s.pointHistory = s.pointHistory.slice(-50);
+                if (Array.isArray(s.redeemHistory) && s.redeemHistory.length > 50) s.redeemHistory = s.redeemHistory.slice(-50);
             });
 
             try {
@@ -500,15 +519,12 @@
                 const warningIcon = student.lateDates.length > 0 ? `<span class="absolute top-1 left-1 md:top-2 md:left-2 bg-red-500 text-white text-xs md:text-sm font-black px-2 py-0.5 rounded-full shadow-lg z-10">${student.lateDates.length}</span>` : '';
                 const card = document.createElement('div'); card.id = `student-card-${student.id}`;
                 
-                // 保留原本的樣式
                 card.className = "bg-white p-2 md:p-3 rounded-2xl shadow-md cursor-pointer transform transition-all hover:-translate-y-1 flex flex-col items-center border border-gray-100 relative ring-orange-400 hover:ring-2 hover:border-orange-200";
                 
-                // 如果目前是多選模式，且這個學生已經被選中了，保持他的高光狀態
                 if (isMultiSelectMode && selectedStudentIds.has(student.id)) {
                     card.classList.add('ring-4', 'ring-indigo-500', 'scale-105', 'bg-indigo-50');
                 }
 
-                // ⭐️ 支援多選模式的點擊邏輯
                 card.onclick = () => {
                     if (isMultiSelectMode) {
                         toggleStudentSelection(student.id, card);
@@ -981,8 +997,7 @@
 
         function openCountdownSettings() {
             document.getElementById('input-event-name').value = countdownData.name !== '目標' ? countdownData.name : '';
-            document.getElementById('input-event-date').value = countdownData.date;
-            document.getElementById('countdown-setting-modal').classList.remove('hidden');
+            document.getElementById('input-event-date').value = countdownData.date;\r\n            document.getElementById('countdown-setting-modal').classList.remove('hidden');
         }
         function closeCountdownSettings() { document.getElementById('countdown-setting-modal').classList.add('hidden'); }
         function saveCountdownSettings() {
