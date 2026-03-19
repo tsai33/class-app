@@ -15,31 +15,34 @@
 </head>
 <body class="bg-orange-50 font-sans h-screen flex flex-col md:flex-row overflow-hidden">
 
-    <nav class="bg-white shadow-xl w-full md:w-20 md:hover:w-56 transition-[width] duration-300 ease-in-out group flex-shrink-0 flex flex-row md:flex-col p-3 md:py-5 md:px-3 gap-2 md:gap-4 z-30 overflow-x-auto md:overflow-visible border-b md:border-b-0 md:border-r border-gray-200 flex-nowrap hide-scrollbar items-center">
+   <nav class="bg-white shadow-xl w-full md:w-20 md:hover:w-56 transition-[width] duration-300 ease-in-out group flex-shrink-0 flex flex-row md:flex-col p-3 md:py-5 md:px-3 gap-2 md:gap-4 z-30 overflow-x-auto md:overflow-visible border-b md:border-b-0 md:border-r border-gray-200 flex-nowrap hide-scrollbar items-center md:items-stretch">
         
-        <div class="hidden md:flex flex-col items-center mb-4 border-b-2 ...">
-             </div>
-
-        <button onclick="switchTab('classroom')" class="flex-shrink-0 whitespace-nowrap w-auto md:w-full flex items-center justify-center md:justify-start gap-3 p-3 rounded-xl font-bold transition-all bg-orange-100 text-orange-600 hover:bg-orange-200">
-            <span class="text-xl">🧑‍🎓</span>
-            <span class="inline md:hidden group-hover:inline">班級主頁</span>
-        </button>
-
-        <button onclick="switchTab('contact-book')" class="flex-shrink-0 whitespace-nowrap w-auto md:w-full flex items-center justify-center md:justify-start gap-3 p-3 rounded-xl font-bold transition-all text-gray-600 hover:bg-orange-50 hover:text-orange-600">
-            <span class="text-xl">📖</span>
-            <span class="inline md:hidden group-hover:inline">聯絡簿</span>
-        </button>
-
-        <button onclick="switchTab('rewards')" class="flex-shrink-0 whitespace-nowrap w-auto md:w-full flex items-center justify-center md:justify-start gap-3 p-3 rounded-xl font-bold transition-all text-gray-600 hover:bg-orange-50 hover:text-orange-600">
-            <span class="text-xl">🎁</span>
-            <span class="inline md:hidden group-hover:inline">獎品兌換</span>
-        </button>
+        <div class="hidden md:flex flex-col items-center mb-4 border-b-2 border-orange-100 pb-4 pt-2 shrink-0">
+            <span class="text-4xl group-hover:text-5xl transition-all duration-300 drop-shadow-sm shrink-0">👨‍🏫</span>
+            <h2 class="text-lg font-black text-gray-800 mt-2 tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">班級管理系統</h2>
+        </div>
         
-        <button onclick="switchTab('settings')" class="flex-shrink-0 whitespace-nowrap w-auto md:w-full flex items-center justify-center md:justify-start gap-3 p-3 rounded-xl font-bold transition-all text-gray-600 hover:bg-orange-50 hover:text-orange-600">
-            <span class="text-xl">⚙️</span>
-            <span class="inline md:hidden group-hover:inline">系統設定</span>
+        <button onclick="switchAppTab('main')" id="nav-tab-main" class="flex-shrink-0 md:flex-none w-auto md:w-full px-4 py-3 md:py-4 rounded-xl font-black text-white bg-orange-500 shadow-md transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-orange-500 overflow-hidden whitespace-nowrap">
+            <span class="text-xl md:text-2xl min-w-[28px] text-center shrink-0">🍉</span> 
+            <span class="inline md:opacity-0 group-hover:opacity-100 transition-opacity duration-300">班級大作戰</span>
         </button>
 
+        <button onclick="switchAppTab('tool')" id="nav-tab-tool" class="flex-shrink-0 md:flex-none w-auto md:w-full px-4 py-3 md:py-4 rounded-xl font-bold text-gray-500 bg-gray-50 hover:bg-gray-200 transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-gray-100 overflow-hidden whitespace-nowrap">
+            <span class="text-xl md:text-2xl min-w-[28px] text-center shrink-0">🌟</span> 
+            <span class="inline md:opacity-0 group-hover:opacity-100 transition-opacity duration-300">餐桶分配</span>
+        </button>
+
+        <button onclick="switchAppTab('tool2')" id="nav-tab-tool2" class="flex-shrink-0 md:flex-none w-auto md:w-full px-4 py-3 md:py-4 rounded-xl font-bold text-gray-500 bg-gray-50 hover:bg-gray-200 transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-gray-100 overflow-hidden whitespace-nowrap">
+            <span class="text-xl md:text-2xl min-w-[28px] text-center shrink-0">📝</span> 
+            <span class="inline md:opacity-0 group-hover:opacity-100 transition-opacity duration-300">學生檢核表</span>
+        </button>
+
+        <div class="hidden md:block flex-1"></div>
+
+        <button onclick="openSettingsModal()" class="flex-shrink-0 md:flex-none w-auto md:w-full px-4 py-3 md:py-4 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-300 transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-gray-200 overflow-hidden whitespace-nowrap md:mt-auto">
+            <span class="text-xl md:text-2xl min-w-[28px] text-center shrink-0">⚙️</span> 
+            <span class="inline md:opacity-0 group-hover:opacity-100 transition-opacity duration-300">系統設定</span>
+        </button>
     </nav>
 
     <div class="flex-1 h-full overflow-y-auto relative w-full bg-orange-50 hide-scrollbar">
