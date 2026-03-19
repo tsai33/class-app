@@ -383,9 +383,19 @@
         }
 
         function saveDataToCloud() {
-            localStorage.setItem('classAppStudents', JSON.stringify(students));
-            const cloudStudents = students.map(s => { const { avatar, ...rest } = s; return rest; });
-            fetch(GOOGLE_SHEET_API_URL, { method: "POST", body: JSON.stringify(cloudStudents) }).catch(err => console.error(err));
+            // ⭐️ 自動瘦身魔法：每個學生只保留最近 50 筆紀錄，防止長期使用容量爆掉
+            students.forEach(s => {
+                if (s.pointHistory && s.pointHistory.length > 50) s.pointHistory = s.pointHistory.slice(-50);
+                if (s.redeemHistory && s.redeemHistory.length > 50) s.redeemHistory = s.redeemHistory.slice(-50);
+            });
+
+            try {
+                localStorage.setItem('classAppStudents', JSON.stringify(students));
+                const cloudStudents = students.map(s => { const { avatar, ...rest } = s; return rest; });
+                fetch(GOOGLE_SHEET_API_URL, { method: "POST", body: JSON.stringify(cloudStudents) }).catch(err => console.error(err));
+            } catch (e) {
+                alert("⚠️ 系統儲存空間已滿！請清除部分歷史紀錄或減少自訂大頭貼。");
+            }
         }
 
         // ==========================================
