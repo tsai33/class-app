@@ -435,6 +435,16 @@
                 alert("學生名單不能為空喔！"); return;
             }
 
+            // ⭐️ 新增防呆：避免不小心誤刪學生導致資料全毀
+            if (namesList.length < students.length) {
+                if (!confirm(`⚠️ 嚴重警告：\n您輸入的人數 (${namesList.length}人) 比原本 (${students.length}人) 少！\n不在名單上的學生資料將會被【永久刪除】，確定沒有不小心刪錯字嗎？`)) {
+                    return; // 按下取消就立刻停止儲存
+                }
+            }
+
+            const newStudents = [];
+            // ...(保留原有的後續程式碼)
+
             const newStudents = [];
             namesList.forEach((name, index) => {
                 const id = index + 1;
@@ -553,6 +563,9 @@
             appAnnouncements.forEach((entry, index) => {
                 const d = new Date(entry.date);
                 const dayStr = isNaN(d) ? '' : ` (${dayNames[d.getDay()]})`;
+                
+                // ⭐️ XSS 防護魔法：把 < 和 > 變成純文字，避免被瀏覽器誤認為是程式碼
+                const safeContent = entry.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
                 gridEl.innerHTML += `
                     <div class="bg-white p-5 md:p-6 rounded-2xl border-2 border-blue-100 shadow-sm relative group hover:border-blue-300 transition-all flex flex-col h-full">
@@ -561,11 +574,10 @@
                             <button onclick="deleteAnnouncement(${index})" class="text-gray-400 bg-gray-50 hover:text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg text-sm font-bold transition-colors border border-gray-100 shadow-sm">刪除</button>
                         </div>
                         <h3 class="font-black text-blue-800 border-b-2 border-blue-50 pb-2 mb-3 text-lg md:text-xl flex items-center gap-2 pr-28 leading-snug">🗓️ ${entry.date}${dayStr}</h3>
-                        <div class="text-gray-800 whitespace-pre-wrap leading-relaxed text-xl md:text-2xl font-medium flex-1 line-clamp-3">${entry.content}</div>
+                        <div class="text-gray-800 whitespace-pre-wrap leading-relaxed text-xl md:text-2xl font-medium flex-1 line-clamp-3">${safeContent}</div>
                     </div>
                 `;
             });
-        }
 
         function showAddAnnouncement() {
             currentEditAnnouncementIndex = -1; // -1 代表新增模式
@@ -624,7 +636,10 @@
         function renderContactBookList() {
             const listEl = document.getElementById('contact-book-list'); listEl.innerHTML = '';
             if (appContactBook.length === 0) { listEl.innerHTML = `<div class="text-center text-gray-400 py-6 font-bold border-2 border-dashed border-gray-200 rounded-xl text-lg">尚無聯絡簿紀錄，點擊上方新增紀錄！</div>`; return; }
-            appContactBook.forEach((entry, index) => {
+           appContactBook.forEach((entry, index) => {
+                // ⭐️ XSS 防護魔法：把 < 和 > 變成純文字
+                const safeContent = entry.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
                 listEl.innerHTML += `
                     <div class="bg-white p-5 md:p-6 rounded-2xl border border-green-100 shadow-sm relative group">
                         <div class="absolute top-4 right-4 flex gap-2">
@@ -633,11 +648,10 @@
                             <button onclick="deleteContactBook(${index})" class="text-gray-400 hover:text-red-500 text-sm md:text-base font-bold bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 transition-colors shadow-sm">刪除</button>
                         </div>
                         <h3 class="font-bold text-green-800 border-b border-green-100 pb-3 mb-4 text-xl md:text-2xl pr-40 leading-snug">🗓️ ${entry.date}</h3>
-                        <div class="text-gray-800 whitespace-pre-wrap leading-relaxed text-lg md:text-xl font-medium">${entry.content}</div>
+                        <div class="text-gray-800 whitespace-pre-wrap leading-relaxed text-lg md:text-xl font-medium">${safeContent}</div>
                     </div>
                 `;
             });
-        }
 
         function showAddContactBook() {
             currentEditContactBookIndex = -1; // ⭐️ -1 代表現在是「新增模式」
@@ -701,8 +715,18 @@
 
         function deleteContactBook(index) {
             if(confirm("確定要刪除這天的聯絡簿紀錄嗎？")) { 
+                const deletedDate = appContactBook[index].date; // ⭐️ 先記住要刪除哪一天
                 appContactBook.splice(index, 1); 
                 localStorage.setItem('classAppContactBook', JSON.stringify(appContactBook)); 
+                
+                // ⭐️ 垃圾回收魔法：順便清掉全班那天的作業紀錄，釋放空間！
+                students.forEach(student => {
+                    if (student.homework && student.homework[deletedDate]) {
+                        delete student.homework[deletedDate];
+                    }
+                });
+                saveDataToCloud(); // 儲存乾淨的學生資料
+
                 renderContactBookList(); 
                 populateTrackingDates(); 
                 renderTracking();
@@ -977,8 +1001,9 @@
             if (val === 'backspace') {
                 input.value = input.value.toString().slice(0, -1);
             } else if (val === '-') {
-                if (input.value.includes('-')) {
-                    input.value = input.value.replace('-', '');
+                // ⭐️ 修正邏輯：如果開頭已經是負號，就把它拿掉；如果不是，就在最前面加負號
+                if (input.value.startsWith('-')) {
+                    input.value = input.value.substring(1); 
                 } else {
                     input.value = '-' + input.value;
                 }
