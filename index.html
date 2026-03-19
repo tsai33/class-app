@@ -15,7 +15,7 @@
 </head>
 <body class="bg-orange-50 font-sans h-screen flex flex-col md:flex-row overflow-hidden">
 
-   <nav class="bg-white shadow-xl w-full md:w-20 md:hover:w-56 transition-[width] duration-300 ease-in-out group flex-shrink-0 flex flex-row md:flex-col p-3 md:py-5 md:px-3 gap-2 md:gap-4 z-30 overflow-x-auto md:overflow-visible border-b md:border-b-0 md:border-r border-gray-200 flex-nowrap hide-scrollbar items-center md:items-stretch">
+    <nav class="bg-white shadow-xl w-full md:w-20 md:hover:w-56 transition-[width] duration-300 ease-in-out group flex-shrink-0 flex flex-row md:flex-col p-3 md:py-5 md:px-3 gap-2 md:gap-4 z-30 overflow-x-auto md:overflow-visible border-b md:border-b-0 md:border-r border-gray-200 flex-nowrap hide-scrollbar items-center md:items-stretch">
         
         <div class="hidden md:flex flex-col items-center mb-4 border-b-2 border-orange-100 pb-4 pt-2 shrink-0">
             <span class="text-4xl group-hover:text-5xl transition-all duration-300 drop-shadow-sm shrink-0">👨‍🏫</span>
@@ -68,7 +68,7 @@
                         <button onclick="openInfoModal('announcement')" class="bg-blue-100 text-blue-700 font-bold px-2 py-3 md:px-3 rounded-xl hover:bg-blue-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">📢</span> <span class="text-sm md:text-base whitespace-nowrap">公告</span></button>
                         <button onclick="openInfoModal('homework')" class="bg-green-100 text-green-700 font-bold px-2 py-3 md:px-3 rounded-xl hover:bg-green-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">📖</span> <span class="text-sm md:text-base whitespace-nowrap">聯絡簿</span></button>
                         <button onclick="openInfoModal('tracking')" class="bg-purple-100 text-purple-700 font-bold px-2 py-3 md:px-3 rounded-xl hover:bg-purple-200 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"><span class="text-lg md:text-xl">✅</span> <span class="text-sm md:text-base whitespace-nowrap">作業追蹤</span></button>
-                        <button id="btn-random-draw" onclick="randomDraw()" class="bg-yellow-400 text-yellow-950 font-extrabold px-2 py-3 md:px-4 rounded-xl hover:bg-yellow-500 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1"><span class="text-xl">🎲</span> <span class="whitespace-nowrap">抽籤</span></button>
+                        <button id="btn-random-draw" onclick="randomDraw()" class="w-full md:w-auto bg-yellow-400 text-yellow-950 font-extrabold px-4 py-3 rounded-xl hover:bg-yellow-500 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1"><span class="text-xl">🎲</span> <span class="whitespace-nowrap">抽籤</span></button>
                     </div>
                 </div>
                 <div id="student-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4 md:gap-5"></div>
@@ -157,7 +157,7 @@
             <h2 class="text-2xl font-black text-rose-700 mb-5 flex items-center gap-2">⏳ 倒數設定</h2>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-gray-700 font-bold mb-1 text-sm">目標名稱 (例如：畢業、期末考)</label>
+                    <label class="block text-gray-700 font-bold mb-1 text-sm">目標名稱</label>
                     <input type="text" id="input-event-name" placeholder="請輸入目標名稱" class="w-full border-2 border-rose-200 rounded-xl p-2.5 focus:outline-none focus:border-rose-400 font-bold bg-rose-50 text-rose-900">
                 </div>
                 <div>
@@ -177,14 +177,14 @@
             <div class="flex-1 overflow-y-auto hide-scrollbar flex flex-col md:flex-row gap-6 pb-2">
                 <div class="flex-1 bg-orange-50 p-4 rounded-2xl border-2 border-orange-100 shadow-inner flex flex-col">
                     <h3 class="font-bold text-orange-800 mb-2 flex items-center gap-2">👨‍🎓 學生名單設定</h3>
-                    <p class="text-xs text-gray-500 mb-2">請直接在此編輯名單，一行一個名字。系統會自動依照行數建立學生卡片與座號。</p>
-                    <textarea id="settings-students-input" class="w-full flex-1 border border-orange-200 rounded-xl p-3 focus:outline-none focus:border-orange-400 bg-white font-medium leading-relaxed min-h-[200px]" placeholder="例如：&#10;王小明&#10;陳小華&#10;林小美..."></textarea>
+                    <p class="text-xs text-gray-500 mb-2">請直接在此編輯名單，一行一個名字。</p>
+                    <textarea id="settings-students-input" class="w-full flex-1 border border-orange-200 rounded-xl p-3 focus:outline-none focus:border-orange-400 bg-white font-medium leading-relaxed min-h-[200px]" placeholder="例如：&#10;王小明&#10;陳小華..."></textarea>
                 </div>
                 
                 <div class="flex-1 bg-green-50 p-4 rounded-2xl border-2 border-green-100 shadow-inner flex flex-col">
                     <h3 class="font-bold text-green-800 mb-2 flex items-center gap-2">🎁 兌換獎勵設定</h3>
-                    <p class="text-xs text-gray-500 mb-2">格式請輸入：<b class="text-green-700">獎品名稱, 點數</b> (請用半形或全形逗號隔開)，一行一個獎品。</p>
-                    <textarea id="settings-rewards-input" class="w-full flex-1 border border-green-200 rounded-xl p-3 focus:outline-none focus:border-green-400 bg-white font-medium leading-relaxed min-h-[200px]" placeholder="例如：&#10;國語生字少一格, 100&#10;免當值日生一次, 150&#10;免午休一次, 200..."></textarea>
+                    <p class="text-xs text-gray-500 mb-2">格式請輸入：<b class="text-green-700">獎品名稱, 點數</b> (一行一個)。</p>
+                    <textarea id="settings-rewards-input" class="w-full flex-1 border border-green-200 rounded-xl p-3 focus:outline-none focus:border-green-400 bg-white font-medium leading-relaxed min-h-[200px]" placeholder="例如：&#10;國語生字少一格, 100..."></textarea>
                 </div>
             </div>
             
@@ -201,9 +201,7 @@
             <div class="text-center mb-5 shrink-0 relative">
                 <div class="relative w-24 h-24 md:w-32 md:h-32 mx-auto mb-2">
                     <div id="modal-avatar" class="w-full h-full rounded-full bg-orange-50 border-4 border-white shadow-md flex items-center justify-center text-5xl md:text-6xl select-none overflow-hidden"></div>
-                    <label for="avatar-upload" class="absolute bottom-0 right-0 bg-gray-800 text-white p-2 rounded-full cursor-pointer hover:bg-gray-700 shadow-md transition-transform hover:scale-110 flex items-center justify-center text-sm md:text-base">
-                        📷
-                    </label>
+                    <label for="avatar-upload" class="absolute bottom-0 right-0 bg-gray-800 text-white p-2 rounded-full cursor-pointer hover:bg-gray-700 shadow-md transition-transform hover:scale-110 flex items-center justify-center text-sm md:text-base">📷</label>
                     <input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
                 </div>
                 <h2 id="modal-name" class="text-xl md:text-2xl font-bold text-gray-800">學生姓名</h2>
@@ -249,8 +247,7 @@
                 </div>
 
                 <div id="section-redeem" class="hidden space-y-3">
-                    <div id="reward-list-container" class="h-48 overflow-y-auto border-2 border-gray-200 rounded-xl p-2 space-y-2 bg-gray-50 hide-scrollbar">
-                        </div>
+                    <div id="reward-list-container" class="h-48 overflow-y-auto border-2 border-gray-200 rounded-xl p-2 space-y-2 bg-gray-50 hide-scrollbar"></div>
                     <div class="mt-2 flex gap-2">
                         <input type="number" id="redeem-point-input" placeholder="扣除點數" class="flex-1 border-2 border-gray-200 p-2 rounded-xl focus:outline-none focus:border-green-400 font-bold text-center bg-gray-50 shadow-inner text-green-700">
                         <button onclick="submitRedemption()" class="bg-green-500 text-white px-4 py-2 rounded-xl font-bold shadow-sm hover:bg-green-600">兌換</button>
@@ -266,11 +263,10 @@
 
     <script>
         // ==========================================
-        // 🌟 左側導覽列 切換功能 (已修正 Class 覆蓋問題)
+        // 🌟 左側導覽列 切換功能
         // ==========================================
         function switchAppTab(tabName) {
             const tabs = ['main', 'tool', 'tool2'];
-            // ⭐️ 更新了這裡的 Class，加入了 flex-shrink-0, w-auto, whitespace-nowrap 確保手機版不跑位
             const activeClass = "flex-shrink-0 md:flex-none w-auto md:w-full px-4 py-3 md:py-4 rounded-xl font-black text-white bg-orange-500 shadow-md transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-orange-500 overflow-hidden whitespace-nowrap";
             const inactiveClass = "flex-shrink-0 md:flex-none w-auto md:w-full px-4 py-3 md:py-4 rounded-xl font-bold text-gray-500 bg-gray-50 hover:bg-gray-200 transition-all transform active:scale-95 text-sm md:text-base flex items-center justify-center md:justify-start gap-3 border border-gray-100 overflow-hidden whitespace-nowrap";
 
@@ -299,19 +295,10 @@
             '完成': 'bg-blue-100 text-blue-700 border-blue-300'
         };
 
-        // ⭐️ 動態獎勵清單
         let appRewards = JSON.parse(localStorage.getItem('classAppRewards')) || [
             { name: "國語生字少一格", cost: 100 },
-            { name: "國語生字少兩格", cost: 200 },
-            { name: "國語語詞少一遍", cost: 150 },
-            { name: "國語語詞少兩遍", cost: 300 },
             { name: "免當值日生一次", cost: 150 },
-            { name: "免午休一次", cost: 200 },
-            { name: "免抬餐一次", cost: 250 },
-            { name: "午休時間播放音樂", cost: 150 },
-            { name: "兌換文具用品", cost: 400 },
-            { name: "提早打菜+吃飯一次", cost: 250 },
-            { name: "圈詞少一遍", cost: 300 }
+            { name: "免午休一次", cost: 200 }
         ];
 
         let appAnnouncements = [];
@@ -321,13 +308,10 @@
             else { appAnnouncements = [{ date: getFormattedTime().split(' ')[0], content: "🌟 歡迎來到班級專屬入口網！" }]; }
         } catch(e) { appAnnouncements = []; }
 
-        // ⭐️ 紀錄目前編輯的公告索引
         let currentEditAnnouncementIndex = -1;
 
         let appContactBook = JSON.parse(localStorage.getItem('classAppContactBook')) || [];
-        
-        // ⭐️ 新增這行：用來記錄目前正在編輯哪一天的聯絡簿
-        let currentEditContactBookIndex = -1; 
+        let currentEditContactBookIndex = -1;
         
         let currentTrackingDate = '';
         let currentTrackingTasks = [];
@@ -376,13 +360,10 @@
                 const response = await fetch(GOOGLE_SHEET_API_URL);
                 const data = await response.json();
                 if (data && data.length > 0) {
-                    // ⭐️ 分流魔法：把雲端抓下來的點數，跟本地端存的「照片」安全合併
                     const localStudents = JSON.parse(localStorage.getItem('classAppStudents') || '[]');
                     data.forEach(cloudStudent => {
                         const localS = localStudents.find(s => s.id === cloudStudent.id);
-                        if (localS && localS.avatar) {
-                            cloudStudent.avatar = localS.avatar; // 保留本地端的專屬大頭貼
-                        }
+                        if (localS && localS.avatar) { cloudStudent.avatar = localS.avatar; }
                     });
                     
                     students = data; 
@@ -394,20 +375,9 @@
         }
 
         function saveDataToCloud() {
-            // 先存一份有完整照片的版本在本地電腦 (保護照片)
             localStorage.setItem('classAppStudents', JSON.stringify(students));
-            
-            // ⭐️ 分流魔法：建立一個「沒有照片」的乾淨版本準備上傳雲端，避免塞爆 Google 表格
-            const cloudStudents = students.map(s => {
-                const { avatar, ...rest } = s; // 把 avatar 抽掉
-                return rest;
-            });
-            
-            // 上傳「乾淨版本」到雲端 (只存點數跟文字紀錄)
-            fetch(GOOGLE_SHEET_API_URL, { 
-                method: "POST", 
-                body: JSON.stringify(cloudStudents) 
-            }).catch(err => console.error(err));
+            const cloudStudents = students.map(s => { const { avatar, ...rest } = s; return rest; });
+            fetch(GOOGLE_SHEET_API_URL, { method: "POST", body: JSON.stringify(cloudStudents) }).catch(err => console.error(err));
         }
 
         // ==========================================
@@ -416,49 +386,32 @@
         function openSettingsModal() {
             const namesText = students.map(s => s.name).join('\n');
             document.getElementById('settings-students-input').value = namesText;
-            
             const rewardsText = appRewards.map(r => `${r.name}, ${r.cost}`).join('\n');
             document.getElementById('settings-rewards-input').value = rewardsText;
-            
             document.getElementById('settings-modal').classList.remove('hidden');
         }
 
-        function closeSettingsModal() {
-            document.getElementById('settings-modal').classList.add('hidden');
-        }
+        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
 
         function saveSystemSettings() {
             const namesInput = document.getElementById('settings-students-input').value.trim();
             const namesList = namesInput.split('\n').map(n => n.trim()).filter(n => n !== '');
             
-            if(namesList.length === 0) {
-                alert("學生名單不能為空喔！"); return;
-            }
+            if(namesList.length === 0) { alert("學生名單不能為空喔！"); return; }
 
-            // ⭐️ 新增防呆：避免不小心誤刪學生導致資料全毀
             if (namesList.length < students.length) {
-                if (!confirm(`⚠️ 嚴重警告：\n您輸入的人數 (${namesList.length}人) 比原本 (${students.length}人) 少！\n不在名單上的學生資料將會被【永久刪除】，確定沒有不小心刪錯字嗎？`)) {
-                    return; // 按下取消就立刻停止儲存
-                }
+                if (!confirm(`⚠️ 嚴重警告：\n您輸入的人數 (${namesList.length}人) 比原本 (${students.length}人) 少！\n不在名單上的學生資料將會被刪除，確定嗎？`)) { return; }
             }
-
-            const newStudents = [];
-            // ...(保留原有的後續程式碼)
 
             const newStudents = [];
             namesList.forEach((name, index) => {
                 const id = index + 1;
                 const existing = students.find(s => s.id === id);
-                if (existing) {
-                    existing.name = name; 
-                    newStudents.push(existing);
-                } else {
-                    newStudents.push({ id: id, name: name, points: 0, lateDates: [], redeemHistory: [], pointHistory: [], homework: {} });
-                }
+                if (existing) { existing.name = name; newStudents.push(existing); } 
+                else { newStudents.push({ id: id, name: name, points: 0, lateDates: [], redeemHistory: [], pointHistory: [], homework: {} }); }
             });
             students = newStudents;
-            saveDataToCloud();
-            renderStudents();
+            saveDataToCloud(); renderStudents();
 
             const rewardsInput = document.getElementById('settings-rewards-input').value.trim();
             const rewardsListText = rewardsInput.split('\n').map(r => r.trim()).filter(r => r !== '');
@@ -477,24 +430,16 @@
         }
 
         function renderRewardsList() {
-            const container = document.getElementById('reward-list-container');
-            container.innerHTML = '';
-            
-            if(appRewards.length === 0) {
-                container.innerHTML = '<div class="text-center text-gray-400 py-6 font-bold">請至「系統設定」新增獎品</div>';
-                return;
-            }
-
+            const container = document.getElementById('reward-list-container'); container.innerHTML = '';
+            if(appRewards.length === 0) { container.innerHTML = '<div class="text-center text-gray-400 py-6 font-bold">請至「系統設定」新增獎品</div>'; return; }
             appRewards.forEach((reward, index) => {
                 container.innerHTML += `
                     <label class="flex items-center p-3 bg-white border rounded-lg hover:bg-orange-50 cursor-pointer shadow-sm">
                         <input type="radio" name="reward" value="${reward.name}" data-cost="${reward.cost}" onchange="autoFillPoints(this)" class="mr-3 w-5 h-5 accent-orange-500">
                         <span class="flex-1 font-bold text-gray-700 text-sm">${index + 1}. ${reward.name} <span class="text-orange-500 font-black">(${reward.cost}點)</span></span>
-                    </label>
-                `;
+                    </label>`;
             });
         }
-
 
         // ==========================================
         // 核心顯示邏輯
@@ -508,11 +453,8 @@
                 card.onclick = () => openModal(student.id);
                 
                 let avatarHTML = '';
-                if (student.avatar) {
-                    avatarHTML = `<img src="${student.avatar}" class="w-full h-full object-cover">`;
-                } else {
-                    avatarHTML = `<img src="images/${student.id}.jpg" loading="lazy" class="w-full h-full object-cover object-top scale-125" onerror="this.outerHTML='<span class=\\'text-4xl md:text-5xl\\'>${getFruitEmoji(student.id)}</span>'">`;
-                }
+                if (student.avatar) { avatarHTML = `<img src="${student.avatar}" class="w-full h-full object-cover">`; } 
+                else { avatarHTML = `<img src="images/${student.id}.jpg" loading="lazy" class="w-full h-full object-cover object-top scale-125" onerror="this.outerHTML='<span class=\\'text-4xl md:text-5xl\\'>${getFruitEmoji(student.id)}</span>'">`; }
 
                 card.innerHTML = `${warningIcon}<div class="relative w-16 h-16 md:w-24 md:h-24 rounded-full mb-1 bg-orange-50 border-2 md:border-4 border-white shadow-inner flex items-center justify-center select-none overflow-hidden">${avatarHTML}</div><h3 class="font-bold text-gray-800 text-sm md:text-base truncate w-full text-center mt-1">${student.name}</h3><div class="mt-1 bg-orange-100 text-orange-900 px-1 py-0.5 md:py-1 rounded-lg font-black text-xs md:text-sm w-full text-center border border-orange-200 shadow-inner">${student.points}</div>`;
                 grid.appendChild(card);
@@ -536,36 +478,24 @@
         }
 
         // ==========================================
-        // 📢 智慧公告系統 (自動過期刪除、星期幾、編輯功能)
+        // 📢 公告牆
         // ==========================================
         function renderAnnouncements() {
-            // ⭐️ 修正時間比較魔法：改用純字串比較，徹底解決時區導致「今天」被誤刪的 Bug
             const now = new Date();
             const todayStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
-            
             const originalLength = appAnnouncements.length;
-            appAnnouncements = appAnnouncements.filter(entry => entry.date >= todayStr);
-
-            if (appAnnouncements.length !== originalLength) {
-                localStorage.setItem('classAppAnnouncements', JSON.stringify(appAnnouncements));
-            }
-
-            const gridEl = document.getElementById('announcement-grid');
-            gridEl.innerHTML = '';
             
-            if (appAnnouncements.length === 0) {
-                gridEl.innerHTML = `<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-400 py-10 font-bold border-2 border-dashed border-gray-200 rounded-xl text-lg">目前沒有公告喔！</div>`;
-                return;
-            }
+            appAnnouncements = appAnnouncements.filter(entry => entry.date >= todayStr);
+            if (appAnnouncements.length !== originalLength) { localStorage.setItem('classAppAnnouncements', JSON.stringify(appAnnouncements)); }
+
+            const gridEl = document.getElementById('announcement-grid'); gridEl.innerHTML = '';
+            if (appAnnouncements.length === 0) { gridEl.innerHTML = `<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-400 py-10 font-bold border-2 border-dashed border-gray-200 rounded-xl text-lg">目前沒有公告喔！</div>`; return; }
             
             appAnnouncements.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
             appAnnouncements.forEach((entry, index) => {
-                const d = new Date(entry.date);
-                const dayStr = isNaN(d) ? '' : ` (${dayNames[d.getDay()]})`;
-                
-                // ⭐️ XSS 防護魔法：把 < 和 > 變成純文字，避免被瀏覽器誤認為是程式碼
-                const safeContent = entry.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                const d = new Date(entry.date); const dayStr = isNaN(d) ? '' : ` (${dayNames[d.getDay()]})`;
+                const safeContent = (entry.content || '').replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
                 gridEl.innerHTML += `
                     <div class="bg-white p-5 md:p-6 rounded-2xl border-2 border-blue-100 shadow-sm relative group hover:border-blue-300 transition-all flex flex-col h-full">
@@ -575,12 +505,12 @@
                         </div>
                         <h3 class="font-black text-blue-800 border-b-2 border-blue-50 pb-2 mb-3 text-lg md:text-xl flex items-center gap-2 pr-28 leading-snug">🗓️ ${entry.date}${dayStr}</h3>
                         <div class="text-gray-800 whitespace-pre-wrap leading-relaxed text-xl md:text-2xl font-medium flex-1 line-clamp-3">${safeContent}</div>
-                    </div>
-                `;
+                    </div>`;
             });
+        }
 
         function showAddAnnouncement() {
-            currentEditAnnouncementIndex = -1; // -1 代表新增模式
+            currentEditAnnouncementIndex = -1; 
             document.getElementById('announcement-editor-area').classList.remove('hidden');
             const today = new Date();
             document.getElementById('announcement-date-input').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
@@ -605,21 +535,16 @@
             const dateVal = document.getElementById('announcement-date-input').value;
             if(!dateVal) { alert("請選擇日期！"); return; }
             if(!content) { alert("公告內容不能為空喔！"); return; }
-            
             const formattedDate = dateVal.replace(/-/g, '/');
             
             if (currentEditAnnouncementIndex !== -1) {
                 appAnnouncements[currentEditAnnouncementIndex] = { date: formattedDate, content: content };
                 currentEditAnnouncementIndex = -1; 
-            } else {
-                appAnnouncements.push({ date: formattedDate, content: content });
-            }
+            } else { appAnnouncements.push({ date: formattedDate, content: content }); }
             
             appAnnouncements.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
             localStorage.setItem('classAppAnnouncements', JSON.stringify(appAnnouncements));
-            
-            hideAddAnnouncement();
-            renderAnnouncements();
+            hideAddAnnouncement(); renderAnnouncements();
         }
 
         function deleteAnnouncement(index) {
@@ -631,15 +556,13 @@
         }
 
         // ==========================================
-        // 📖 聯絡簿紀錄 (加入編輯功能)
+        // 📖 聯絡簿紀錄
         // ==========================================
         function renderContactBookList() {
             const listEl = document.getElementById('contact-book-list'); listEl.innerHTML = '';
             if (appContactBook.length === 0) { listEl.innerHTML = `<div class="text-center text-gray-400 py-6 font-bold border-2 border-dashed border-gray-200 rounded-xl text-lg">尚無聯絡簿紀錄，點擊上方新增紀錄！</div>`; return; }
-           appContactBook.forEach((entry, index) => {
-                // ⭐️ XSS 防護魔法：把 < 和 > 變成純文字
-                const safeContent = entry.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
+            appContactBook.forEach((entry, index) => {
+                const safeContent = (entry.content || '').replace(/</g, "&lt;").replace(/>/g, "&gt;");
                 listEl.innerHTML += `
                     <div class="bg-white p-5 md:p-6 rounded-2xl border border-green-100 shadow-sm relative group">
                         <div class="absolute top-4 right-4 flex gap-2">
@@ -649,33 +572,27 @@
                         </div>
                         <h3 class="font-bold text-green-800 border-b border-green-100 pb-3 mb-4 text-xl md:text-2xl pr-40 leading-snug">🗓️ ${entry.date}</h3>
                         <div class="text-gray-800 whitespace-pre-wrap leading-relaxed text-lg md:text-xl font-medium">${safeContent}</div>
-                    </div>
-                `;
+                    </div>`;
             });
+        }
 
         function showAddContactBook() {
-            currentEditContactBookIndex = -1; // ⭐️ -1 代表現在是「新增模式」
+            currentEditContactBookIndex = -1;
             document.getElementById('contact-book-editor').classList.remove('hidden');
             const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            document.getElementById('contact-book-date-input').value = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('contact-book-date-input').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             document.getElementById('contact-book-textarea').value = '';
         }
 
         function hideAddContactBook() { 
             document.getElementById('contact-book-editor').classList.add('hidden'); 
-            currentEditContactBookIndex = -1; // 清除狀態
+            currentEditContactBookIndex = -1;
         }
 
-        // ⭐️ 全新功能：點擊編輯聯絡簿
         function editContactBook(index) {
-            currentEditContactBookIndex = index; // 記住現在編輯的是哪一筆
+            currentEditContactBookIndex = index; 
             const entry = appContactBook[index];
             document.getElementById('contact-book-editor').classList.remove('hidden');
-            
-            // 將 "2026/03/19 (星期四)" 轉回 "2026-03-19" 給輸入框使用
             const dateOnly = entry.date.split(' ')[0].replace(/\//g, '-');
             document.getElementById('contact-book-date-input').value = dateOnly;
             document.getElementById('contact-book-textarea').value = entry.content;
@@ -684,52 +601,37 @@
         function saveContactBook() {
             const content = document.getElementById('contact-book-textarea').value.trim();
             const dateVal = document.getElementById('contact-book-date-input').value;
-            
             if(!dateVal) { alert("請選擇日期！"); return; }
             if(!content) { alert("聯絡簿內容不能為空喔！"); return; }
             
             const selectedDate = new Date(dateVal);
             const formattedDate = `${selectedDate.getFullYear()}/${(selectedDate.getMonth()+1).toString().padStart(2,'0')}/${selectedDate.getDate().toString().padStart(2,'0')} (${dayNames[selectedDate.getDay()]})`;
 
-            // ⭐️ 判斷是新增還是編輯
             if (currentEditContactBookIndex !== -1) {
                 appContactBook[currentEditContactBookIndex] = { date: formattedDate, content: content };
                 currentEditContactBookIndex = -1;
-            } else {
-                appContactBook.unshift({ date: formattedDate, content: content });
-            }
+            } else { appContactBook.unshift({ date: formattedDate, content: content }); }
 
-            // 存檔前確保時間由新到舊排序
             appContactBook.sort((a, b) => b.date.localeCompare(a.date));
-
             localStorage.setItem('classAppContactBook', JSON.stringify(appContactBook));
-            hideAddContactBook(); 
-            renderContactBookList();
+            hideAddContactBook(); renderContactBookList();
             
-            // 同步更新作業追蹤表
             if(!document.getElementById('info-content-tracking').classList.contains('hidden')){ 
-                populateTrackingDates(); 
-                renderTracking(); 
+                populateTrackingDates(); renderTracking(); 
             }
         }
 
         function deleteContactBook(index) {
             if(confirm("確定要刪除這天的聯絡簿紀錄嗎？")) { 
-                const deletedDate = appContactBook[index].date; // ⭐️ 先記住要刪除哪一天
+                const deletedDate = appContactBook[index].date; 
                 appContactBook.splice(index, 1); 
                 localStorage.setItem('classAppContactBook', JSON.stringify(appContactBook)); 
                 
-                // ⭐️ 垃圾回收魔法：順便清掉全班那天的作業紀錄，釋放空間！
                 students.forEach(student => {
-                    if (student.homework && student.homework[deletedDate]) {
-                        delete student.homework[deletedDate];
-                    }
+                    if (student.homework && student.homework[deletedDate]) { delete student.homework[deletedDate]; }
                 });
-                saveDataToCloud(); // 儲存乾淨的學生資料
-
-                renderContactBookList(); 
-                populateTrackingDates(); 
-                renderTracking();
+                saveDataToCloud(); 
+                renderContactBookList(); populateTrackingDates(); renderTracking();
             }
         }
 
@@ -737,11 +639,8 @@
         // ✅ 作業追蹤系統 
         // ==========================================
         function populateTrackingDates() {
-            const select = document.getElementById('tracking-date-select');
-            select.innerHTML = '';
-            if (appContactBook.length === 0) {
-                select.innerHTML = '<option value="">(無聯絡簿紀錄)</option>'; return;
-            }
+            const select = document.getElementById('tracking-date-select'); select.innerHTML = '';
+            if (appContactBook.length === 0) { select.innerHTML = '<option value="">(無聯絡簿紀錄)</option>'; return; }
             appContactBook.forEach((entry, i) => {
                 const opt = document.createElement('option');
                 opt.value = i; opt.text = `🗓️ ${entry.date}`; select.appendChild(opt);
@@ -759,7 +658,7 @@
 
             const entry = appContactBook[select.value];
             currentTrackingDate = entry.date;
-            currentTrackingTasks = entry.content.split('\n').map(t => t.trim()).filter(t => t !== '');
+            currentTrackingTasks = (entry.content || '').split('\n').map(t => t.trim()).filter(t => t !== '');
 
             if (currentTrackingTasks.length === 0) {
                 container.innerHTML = '<div class="text-center text-gray-400 py-10 font-bold bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 text-lg">該日聯絡簿無文字內容可追蹤！</div>';
@@ -768,7 +667,6 @@
 
             const numColumns = 3; 
             const chunkSize = Math.ceil(students.length / numColumns);
-            
             let html = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 items-start pb-2">`;
 
             for (let c = 0; c < numColumns; c++) {
@@ -781,24 +679,18 @@
                         <table class="w-full text-center border-collapse whitespace-nowrap text-sm">
                             <thead class="bg-purple-50 text-gray-800">
                                 <tr>
-                                    <th class="sticky left-0 z-20 bg-purple-100 border-b-2 border-r border-purple-200 p-2 md:p-3 min-w-[50px] md:min-w-[60px]">號碼</th>
-                `;
+                                    <th class="sticky left-0 z-20 bg-purple-100 border-b-2 border-r border-purple-200 p-2 md:p-3 min-w-[50px] md:min-w-[60px]">號碼</th>`;
 
                 currentTrackingTasks.forEach((task, i) => {
+                    const safeTask = task.replace(/</g, "&lt;").replace(/>/g, "&gt;");
                     html += `
                                     <th class="border-b-2 border-purple-200 p-2 md:p-3 min-w-[100px] md:min-w-[110px]">
-                                        <div class="truncate max-w-[120px] mx-auto font-black text-purple-900" title="${task}">${task}</div>
-                                        <button onclick="batchSetTracking(${i}, '已交')" class="mt-1.5 text-xs bg-purple-600 text-white hover:bg-purple-700 px-2 py-1.5 rounded-lg transition-colors w-full font-bold shadow-sm">
-                                            ⚡ 全班已交
-                                        </button>
-                                    </th>
-                    `;
+                                        <div class="truncate max-w-[120px] mx-auto font-black text-purple-900" title="${safeTask}">${safeTask}</div>
+                                        <button onclick="batchSetTracking(${i}, '已交')" class="mt-1.5 text-xs bg-purple-600 text-white hover:bg-purple-700 px-2 py-1.5 rounded-lg transition-colors w-full font-bold shadow-sm">⚡ 全班已交</button>
+                                    </th>`;
                 });
 
-                html += `       </tr>
-                            </thead>
-                            <tbody class="bg-white [&>tr:last-child>td]:border-b-0">
-                `;
+                html += `       </tr></thead><tbody class="bg-white [&>tr:last-child>td]:border-b-0">`;
 
                 chunk.forEach((student) => {
                     if (!student.homework) student.homework = {};
@@ -806,32 +698,17 @@
 
                     html += `
                                 <tr class="hover:bg-orange-50 transition-colors">
-                                    <td class="sticky left-0 z-10 bg-white border-r border-b border-gray-200 p-2 md:p-3 font-black text-gray-900 shadow-[1px_0_0_0_#e5e7eb]">
-                                        ${student.id}
-                                    </td>
-                    `;
+                                    <td class="sticky left-0 z-10 bg-white border-r border-b border-gray-200 p-2 md:p-3 font-black text-gray-900 shadow-[1px_0_0_0_#e5e7eb]">${student.id}</td>`;
 
                     currentTrackingTasks.forEach((task, i) => {
                         const status = student.homework[currentTrackingDate][task] || '缺交';
                         const colorClass = HW_COLORS[status];
-                        html += `
-                                    <td class="p-1.5 md:p-2 border-b border-gray-200">
-                                        <button onclick="cycleTrackingStatus(${student.id}, ${i}, this)" 
-                                            class="w-full py-1.5 md:py-2 px-1 rounded-lg text-xs md:text-sm font-black border transition-colors select-none active:scale-95 shadow-sm ${colorClass}">
-                                            ${status}
-                                        </button>
-                                    </td>
-                        `;
+                        html += `<td class="p-1.5 md:p-2 border-b border-gray-200"><button onclick="cycleTrackingStatus(${student.id}, ${i}, this)" class="w-full py-1.5 md:py-2 px-1 rounded-lg text-xs md:text-sm font-black border transition-colors select-none active:scale-95 shadow-sm ${colorClass}">${status}</button></td>`;
                     });
                     html += `   </tr>`;
                 });
-
-                html += `       </tbody>
-                        </table>
-                    </div>
-                </div>`;
+                html += `       </tbody></table></div></div>`;
             }
-
             html += `</div>`;
             container.innerHTML = html;
         }
@@ -840,29 +717,23 @@
             const task = currentTrackingTasks[taskIndex];
             const student = students.find(s => s.id === studentId);
             let currentStatus = student.homework[currentTrackingDate][task] || '缺交';
-            
             let nextIndex = (HW_STATUSES.indexOf(currentStatus) + 1) % HW_STATUSES.length;
             let newStatus = HW_STATUSES[nextIndex];
-            
             student.homework[currentTrackingDate][task] = newStatus;
             saveDataToCloud();
-            
-            const colorClass = HW_COLORS[newStatus];
-            btnElement.className = `w-full py-1.5 md:py-2 px-1 rounded-lg text-xs md:text-sm font-black border transition-colors select-none active:scale-95 shadow-sm ${colorClass}`;
+            btnElement.className = `w-full py-1.5 md:py-2 px-1 rounded-lg text-xs md:text-sm font-black border transition-colors select-none active:scale-95 shadow-sm ${HW_COLORS[newStatus]}`;
             btnElement.innerText = newStatus;
         }
 
         function batchSetTracking(taskIndex, targetStatus) {
             const task = currentTrackingTasks[taskIndex];
-            if(!confirm(`確定要將【全班】的「${task.substring(0,8)}...」都設為「${targetStatus}」嗎？`)) return;
-            
+            if(!confirm(`確定要將【全班】的這項作業都設為「${targetStatus}」嗎？`)) return;
             students.forEach(student => {
                 if (!student.homework) student.homework = {};
                 if (!student.homework[currentTrackingDate]) student.homework[currentTrackingDate] = {};
                 student.homework[currentTrackingDate][task] = targetStatus;
             });
-            saveDataToCloud();
-            renderTracking();
+            saveDataToCloud(); renderTracking();
         }
 
         // ==========================================
@@ -873,19 +744,14 @@
             document.getElementById('info-content-announcement').classList.add('hidden');
             document.getElementById('info-content-homework').classList.add('hidden'); 
             document.getElementById('info-content-tracking').classList.add('hidden');
-            
             document.getElementById(`info-content-${type}`).classList.remove('hidden');
-
-            if(type === 'tracking') {
-                populateTrackingDates();
-                renderTracking();
-            }
+            if(type === 'tracking') { populateTrackingDates(); renderTracking(); }
         }
 
         function closeInfoModal() {
             document.getElementById('info-modal').classList.add('hidden');
             hideAddAnnouncement();
-            hideAddContactBook(); // ⭐️ 新增這行：確保關閉視窗時，聯絡簿編輯區也會跟著收起來
+            hideAddContactBook(); 
         }
 
         function openEnlargeModal(type, index = null) {
@@ -910,11 +776,8 @@
             document.getElementById('modal-name').innerText = student.name; document.getElementById('modal-points').innerText = student.points;
             
             let avatarHTML = '';
-            if (student.avatar) {
-                avatarHTML = `<img src="${student.avatar}" class="w-full h-full object-cover">`;
-            } else {
-                avatarHTML = `<img src="images/${student.id}.jpg" class="w-full h-full object-cover object-top scale-125" onerror="this.outerHTML='<span class=\\'text-6xl md:text-7xl\\'>${getFruitEmoji(student.id)}</span>'">`;
-            }
+            if (student.avatar) { avatarHTML = `<img src="${student.avatar}" class="w-full h-full object-cover">`; } 
+            else { avatarHTML = `<img src="images/${student.id}.jpg" class="w-full h-full object-cover object-top scale-125" onerror="this.outerHTML='<span class=\\'text-6xl md:text-7xl\\'>${getFruitEmoji(student.id)}</span>'">`; }
             document.getElementById('modal-avatar').innerHTML = avatarHTML;
             document.getElementById('avatar-upload').value = '';
             
@@ -939,10 +802,7 @@
             });
         }
 
-        function autoFillPoints(radioElement) {
-            const pointCost = radioElement.getAttribute('data-cost');
-            document.getElementById('redeem-point-input').value = pointCost;
-        }
+        function autoFillPoints(radioElement) { document.getElementById('redeem-point-input').value = radioElement.getAttribute('data-cost'); }
 
         function renderPointHistoryList(student) {
             const listEl = document.getElementById('point-history-list'); listEl.innerHTML = '';
@@ -983,12 +843,7 @@
         function submitCustomPoints() {
             const inputVal = document.getElementById('custom-point-input').value;
             const pts = parseInt(inputVal); 
-            
-            // ⭐️ 防呆機制：如果沒輸入、輸入非數字、或是輸入包含小數點，就阻擋並跳出警告
-            if (isNaN(pts) || inputVal.includes('.')) { 
-                alert("⚠️ 請輸入有效的整數！(不可包含小數點)"); 
-                return; 
-            }
+            if (isNaN(pts) || inputVal.includes('.')) { alert("⚠️ 請輸入有效的整數！(不可包含小數點)"); return; }
 
             const student = students.find(s => s.id === currentSelectedStudentId); 
             student.pointHistory.push(`[${getFormattedTime()}] 手動調整 (${pts >= 0 ? '+' : ''}${pts}點)`);
@@ -998,18 +853,11 @@
         
         function appendNumpad(val) {
             const input = document.getElementById('custom-point-input');
-            if (val === 'backspace') {
-                input.value = input.value.toString().slice(0, -1);
-            } else if (val === '-') {
-                // ⭐️ 修正邏輯：如果開頭已經是負號，就把它拿掉；如果不是，就在最前面加負號
-                if (input.value.startsWith('-')) {
-                    input.value = input.value.substring(1); 
-                } else {
-                    input.value = '-' + input.value;
-                }
-            } else {
-                input.value += val;
-            }
+            if (val === 'backspace') { input.value = input.value.toString().slice(0, -1); } 
+            else if (val === '-') {
+                if (input.value.startsWith('-')) { input.value = input.value.substring(1); } 
+                else { input.value = '-' + input.value; }
+            } else { input.value += val; }
         }
         
        function submitRedemption() {
@@ -1028,45 +876,24 @@
 
         function updateStudentPoints(studentId, pointsToChange) { const index = students.findIndex(s => s.id === studentId); if (index !== -1) { students[index].points += pointsToChange; renderStudents(); saveDataToCloud(); } }
 
-        // ==========================================
-        // 🖼️ 學生自訂頭像上傳與壓縮處理
-        // ==========================================
         function handleAvatarUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
+            const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const MAX_SIZE = 200; 
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-                    } else {
-                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
+                    const canvas = document.createElement('canvas'); const MAX_SIZE = 200; 
+                    let width = img.width; let height = img.height;
+                    if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } 
+                    else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-
                     const student = students.find(s => s.id === currentSelectedStudentId);
                     student.avatar = dataUrl;
-                    
-                    saveDataToCloud(); 
-                    renderStudents();  
-                    openModal(currentSelectedStudentId); 
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+                    saveDataToCloud(); renderStudents(); openModal(currentSelectedStudentId); 
+                }; img.src = e.target.result;
+            }; reader.readAsDataURL(file);
         }
 
         // ==========================================
@@ -1075,33 +902,14 @@
         let countdownData = JSON.parse(localStorage.getItem('classAppCountdown')) || { name: '目標', date: '' };
 
         function updateCountdownDisplay() {
-            const nameEl = document.getElementById('display-event-name');
-            const daysEl = document.getElementById('display-countdown-days');
-            
-            if (!countdownData.date) {
-                nameEl.innerText = '點擊設定倒數';
-                daysEl.innerText = '--';
-                return;
-            }
-
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); 
-            const targetDate = new Date(countdownData.date);
-            targetDate.setHours(0, 0, 0, 0);
-
-            const diffTime = targetDate - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            if (diffDays > 0) {
-                nameEl.innerText = `距離 ${countdownData.name}`;
-                daysEl.innerText = diffDays;
-            } else if (diffDays === 0) {
-                nameEl.innerText = `就是今天！`;
-                daysEl.innerText = '0';
-            } else {
-                nameEl.innerText = `${countdownData.name}已過`;
-                daysEl.innerText = Math.abs(diffDays);
-            }
+            const nameEl = document.getElementById('display-event-name'); const daysEl = document.getElementById('display-countdown-days');
+            if (!countdownData.date) { nameEl.innerText = '點擊設定倒數'; daysEl.innerText = '--'; return; }
+            const today = new Date(); today.setHours(0, 0, 0, 0); 
+            const targetDate = new Date(countdownData.date); targetDate.setHours(0, 0, 0, 0);
+            const diffTime = targetDate - today; const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays > 0) { nameEl.innerText = `距離 ${countdownData.name}`; daysEl.innerText = diffDays; } 
+            else if (diffDays === 0) { nameEl.innerText = `就是今天！`; daysEl.innerText = '0'; } 
+            else { nameEl.innerText = `${countdownData.name}已過`; daysEl.innerText = Math.abs(diffDays); }
         }
 
         function openCountdownSettings() {
@@ -1110,30 +918,19 @@
             document.getElementById('countdown-setting-modal').classList.remove('hidden');
         }
 
-        function closeCountdownSettings() {
-            document.getElementById('countdown-setting-modal').classList.add('hidden');
-        }
+        function closeCountdownSettings() { document.getElementById('countdown-setting-modal').classList.add('hidden'); }
 
         function saveCountdownSettings() {
             const name = document.getElementById('input-event-name').value.trim();
             const date = document.getElementById('input-event-date').value;
-            
-            if (!name || !date) {
-                alert('名稱與日期都不能為空喔！');
-                return;
-            }
-
+            if (!name || !date) { alert('名稱與日期都不能為空喔！'); return; }
             countdownData = { name, date };
             localStorage.setItem('classAppCountdown', JSON.stringify(countdownData));
-            updateCountdownDisplay();
-            closeCountdownSettings();
+            updateCountdownDisplay(); closeCountdownSettings();
         }
 
         // 初始載入
-        window.onload = () => {
-            loadDataFromCloud();
-            updateCountdownDisplay();
-        };
+        window.onload = () => { loadDataFromCloud(); updateCountdownDisplay(); };
     </script>
 </body>
 </html>
