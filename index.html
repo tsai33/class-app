@@ -581,7 +581,7 @@
                             <button onclick="deleteAnnouncement(${index})" class="text-gray-400 bg-gray-50 hover:text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg text-sm font-bold transition-colors border border-gray-100 shadow-sm">刪除</button>
                         </div>
                         <h3 class="font-black text-blue-800 border-b-2 border-blue-50 pb-2 mb-3 text-lg md:text-xl flex items-center gap-2 pr-28 leading-snug">🗓️ ${entry.date}${dayStr}</h3>
-                        <div class="text-gray-800 whitespace-pre-wrap leading-relaxed text-xl md:text-2xl font-medium flex-1 line-clamp-3">${safeContent}</div>
+                        <div class="text-gray-800 whitespace-pre-wrap leading-relaxed text-xl md:text-4xl font-medium flex-1 line-clamp-3">${safeContent}</div>
                     </div>`;
             });
         }
@@ -1111,7 +1111,13 @@
                         isTimerRunning = false;
                         btn.innerText = '開始';
                         btn.classList.replace('bg-orange-500', 'bg-teal-500');
-                        alert("⏰ 時間到！");
+                        
+                        // 👇 加上這兩行來播放音效
+                        const audio = new Audio('https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg');
+                        audio.play();
+                        
+                        // 稍微延遲 0.1 秒再跳出視窗，以免視窗卡住聲音
+                        setTimeout(() => { alert("⏰ 時間到！"); }, 100);
                     }
                 }, 1000);
             }
