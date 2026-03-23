@@ -1113,8 +1113,26 @@
                         btn.classList.replace('bg-orange-500', 'bg-teal-500');
                         
                         // 👇 加上這兩行來播放音效
-                        const audio = new Audio('https://actions.google.com/sounds/v1/alarms/mechanical_clock_ring.ogg');
-                        audio.play();
+                        // 🎵 溫柔版：加了音量控制的柔和提示音
+                        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                        // 1. 建立「音量控制器」(GainNode)，把音量調小到 50% (0.5)
+                        const gainNode = audioCtx.createGain();
+                        gainNode.gain.value = 0.5; // 👈 如果覺得還是太大聲，可以改成 0.1；太小聲可以改 0.5
+                        gainNode.connect(audioCtx.destination);
+
+                        // 2. 建立聲音
+                        const oscillator = audioCtx.createOscillator();
+                        oscillator.type = 'sine'; // 👈 改成 'sine' (正弦波)，這是最圓潤溫柔的聲音，像吹玻璃杯
+                        oscillator.frequency.value = 600; // 頻率調低一點，聽起來比較溫暖
+
+                        oscillator.connect(gainNode);
+
+                        // 3. 播放並設定 5 秒後溫柔地消失
+                        oscillator.start();
+                        // 讓聲音像淡出一樣慢慢變小，才不會有突然切斷的「啵」聲
+                        gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 5);
+                        oscillator.stop(audioCtx.currentTime + 5);
                         
                         
                     }
