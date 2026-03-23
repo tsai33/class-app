@@ -97,22 +97,22 @@
     </div>
 
     <div id="timer-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm relative transform transition-all border border-gray-100 flex flex-col items-center">
-            <button onclick="closeTimerModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-5xl font-light z-10 leading-none">&times;</button>
-            <h2 class="text-2xl font-black text-teal-700 mb-6 flex items-center gap-2">⏱️ 課堂計時器</h2>
+        <div class="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl w-full max-w-lg relative transform transition-all border border-gray-100 flex flex-col items-center">
+            <button onclick="closeTimerModal()" class="absolute top-4 right-6 text-gray-400 hover:text-red-500 text-6xl font-light z-10 leading-none">&times;</button>
+            <h2 class="text-3xl md:text-4xl font-black text-teal-700 mb-8 flex items-center gap-2">⏱️ 課堂計時器</h2>
             
-            <div id="timer-display" class="text-8xl md:text-9xl font-black text-gray-800 tracking-wider mb-6 tabular-nums">05:00</div>
+            <div id="timer-display" class="text-[6rem] md:text-[8rem] leading-none font-black text-gray-800 tracking-wider mb-8 tabular-nums">05:00</div>
             
-            <div class="flex gap-2 w-full mb-6">
-                <button onclick="setTimer(1)" class="flex-1 bg-teal-50 text-teal-700 py-2 rounded-lg font-bold border border-teal-200 hover:bg-teal-100 transition-colors shadow-sm">+1分</button>
-                <button onclick="setTimer(3)" class="flex-1 bg-teal-50 text-teal-700 py-2 rounded-lg font-bold border border-teal-200 hover:bg-teal-100 transition-colors shadow-sm">+3分</button>
-                <button onclick="setTimer(5)" class="flex-1 bg-teal-50 text-teal-700 py-2 rounded-lg font-bold border border-teal-200 hover:bg-teal-100 transition-colors shadow-sm">+5分</button>
-                <button onclick="setTimer(10)" class="flex-1 bg-teal-50 text-teal-700 py-2 rounded-lg font-bold border border-teal-200 hover:bg-teal-100 transition-colors shadow-sm">+10分</button>
+            <div class="flex gap-3 w-full mb-8">
+                <button onclick="setTimer(1)" class="flex-1 bg-teal-50 text-teal-700 py-3 rounded-xl text-lg md:text-xl font-bold border border-teal-200 hover:bg-teal-100 transition-colors shadow-sm">+1分</button>
+                <button onclick="setTimer(3)" class="flex-1 bg-teal-50 text-teal-700 py-3 rounded-xl text-lg md:text-xl font-bold border border-teal-200 hover:bg-teal-100 transition-colors shadow-sm">+3分</button>
+                <button onclick="setTimer(5)" class="flex-1 bg-teal-50 text-teal-700 py-3 rounded-xl text-lg md:text-xl font-bold border border-teal-200 hover:bg-teal-100 transition-colors shadow-sm">+5分</button>
+                <button onclick="setTimer(10)" class="flex-1 bg-teal-50 text-teal-700 py-3 rounded-xl text-lg md:text-xl font-bold border border-teal-200 hover:bg-teal-100 transition-colors shadow-sm">+10分</button>
             </div>
 
-            <div class="flex gap-3 w-full">
-                <button id="btn-timer-start" onclick="toggleTimer()" class="flex-1 bg-teal-500 text-white py-4 rounded-xl font-bold hover:bg-teal-600 shadow-md text-xl transition-colors">開始</button>
-                <button onclick="resetTimer()" class="flex-1 bg-gray-200 text-gray-700 py-4 rounded-xl font-bold hover:bg-gray-300 shadow-sm text-xl transition-colors">歸零</button>
+            <div class="flex gap-4 w-full">
+                <button id="btn-timer-start" onclick="toggleTimer()" class="flex-1 bg-teal-500 text-white py-5 rounded-2xl font-black hover:bg-teal-600 shadow-md text-2xl md:text-3xl transition-colors">開始</button>
+                <button onclick="resetTimer()" class="flex-1 bg-gray-200 text-gray-700 py-5 rounded-2xl font-black hover:bg-gray-300 shadow-sm text-2xl md:text-3xl transition-colors">歸零</button>
             </div>
         </div>
     </div>
@@ -1113,7 +1113,7 @@
                         btn.classList.replace('bg-orange-500', 'bg-teal-500');
                         
                         // 👇 加上這兩行來播放音效
-                        const audio = new Audio('https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg');
+                        const audio = new Audio('https://actions.google.com/sounds/v1/alarms/mechanical_clock_ring.ogg');
                         audio.play();
                         
                         
