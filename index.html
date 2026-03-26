@@ -122,10 +122,13 @@
             <button onclick="closeInfoModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-4xl font-light z-40">&times;</button>
             
             <div id="info-content-announcement" class="hidden flex-1 overflow-y-auto hide-scrollbar max-w-full px-4 mx-auto w-full">
-                <div class="flex justify-between items-center mb-4 pr-8">
-                    <h2 class="text-2xl font-black text-blue-700 flex items-center gap-2">📢 班級公告牆</h2>
-                    <button onclick="showAddAnnouncement()" class="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-bold transition-colors shadow-sm">➕ 新增公告</button>
-                </div>
+               <div class="flex justify-between items-center mb-4 pr-8">
+                   <h2 class="text-2xl font-black text-blue-700 flex items-center gap-2">📢 班級公告牆</h2>
+                   <div class="flex gap-2">
+                   <button onclick="openRealtimeBoard()" class="text-sm bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 font-bold transition-colors shadow-sm flex items-center">🚨 即時公告</button>
+                   <button onclick="showAddAnnouncement()" class="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-bold transition-colors shadow-sm flex items-center">➕ 新增公告</button>
+               </div>
+           </div>
                 
                 <div id="announcement-editor-area" class="hidden mb-5 bg-blue-50 p-5 rounded-xl border-2 border-blue-200 shadow-inner">
                     <div class="font-bold text-blue-800 mb-2 flex items-center gap-2">
@@ -290,7 +293,22 @@
             </div>
         </div>
     </div>
-
+    <div id="realtime-modal" class="fixed inset-0 bg-black bg-opacity-80 hidden flex-col items-center justify-center z-[70] p-4 md:p-10">
+        <div class="w-full max-w-6xl bg-white rounded-3xl shadow-2xl flex flex-col h-full max-h-[85vh] overflow-hidden relative">
+            <div class="bg-red-500 text-white p-4 md:p-6 flex justify-between items-center shrink-0">
+                <h2 class="text-3xl md:text-4xl font-black flex items-center gap-3">🚨 即時公告看板</h2>
+                <div class="flex gap-4">
+                    <button id="btn-edit-realtime" onclick="toggleRealtimeEdit()" class="bg-white text-red-600 hover:bg-red-50 px-6 py-2 rounded-xl font-bold text-xl transition-colors shadow-sm">編輯</button>
+                    <button onclick="closeRealtimeBoard()" class="text-white hover:text-red-200 text-5xl leading-none font-light">&times;</button>
+                </div>
+            </div>
+            
+            <div class="flex-1 p-6 md:p-12 relative bg-yellow-50">
+                <div id="realtime-display" class="w-full h-full text-5xl md:text-9xl text-gray-800 font-bold whitespace-pre-wrap overflow-y-auto leading-normal hide-scrollbar"></div>
+                <textarea id="realtime-input" class="hidden w-full h-full text-4xl md:text-5xl text-gray-800 font-bold bg-white border-4 border-red-200 rounded-2xl p-6 focus:outline-none focus:border-red-400 resize-none shadow-inner" placeholder="請在這裡輸入臨時要宣布的事項..."></textarea>
+            </div>
+        </div>
+    </div>
     <script>
         // ==========================================
         // 🌟 左側導覽列 切換功能
@@ -906,10 +924,34 @@
         }
 
         function quickAdd(type) {
+            // --- 📅 個人防呆鎖 開始 ---
+            const todayDate = new Date().toDateString();
+            // 🔑 鎖的名稱加上學生的 ID，變成「個人專屬鎖」！
+            const lockKey = 'attendance_lock_' + currentSelectedStudentId; 
+            
+            if (localStorage.getItem(lockKey) === todayDate) {
+                alert('🚫 這位同學今天已經點過名囉！');
+                return; // 直接擋下，不給點數
+            }
+            // --- 📅 個人防呆鎖 結束 ---
+
+            // 原本的加分與扣分邏輯
             const student = students.find(s => s.id === currentSelectedStudentId); let pointsToChange = 0;
-            if (type === 'punctual') { pointsToChange = currentTodayPoints; student.pointHistory.push(`[${getFormattedTime()}] 準時到校 (+${currentTodayPoints}點)`); } 
-            else if (type === 'late') { if(!confirm(`確定要登記遲到並扣除 ${currentTodayPoints} 點嗎？`)) return; pointsToChange = -currentTodayPoints; student.lateDates.push(`[${getFormattedTime()}] 遲到登記`); student.pointHistory.push(`[${getFormattedTime()}] 遲到扣除 (-${currentTodayPoints}點)`); }
-            updateStudentPoints(currentSelectedStudentId, pointsToChange); closeModal();
+            if (type === 'punctual') { 
+                pointsToChange = currentTodayPoints; 
+                student.pointHistory.push(`[${getFormattedTime()}] 準時到校 (+${currentTodayPoints}點)`); 
+            } else if (type === 'late') { 
+                if(!confirm(`確定要登記遲到並扣除 ${currentTodayPoints} 點嗎？`)) return; 
+                pointsToChange = -currentTodayPoints; 
+                student.lateDates.push(`[${getFormattedTime()}] 遲到登記`); 
+                student.pointHistory.push(`[${getFormattedTime()}] 遲到扣除 (-${currentTodayPoints}點)`); 
+            }
+            
+            // 點名成功後，把這位同學的鎖「鎖上」
+            localStorage.setItem(lockKey, todayDate);
+
+            updateStudentPoints(currentSelectedStudentId, pointsToChange); 
+            closeModal();
         }
 
         function submitCustomPoints() {
@@ -1145,6 +1187,58 @@
 
         // 初始載入
         window.onload = () => { loadDataFromCloud(); updateCountdownDisplay(); };
+        // --- 🚨 即時公告看板功能 開始 ---
+        let isRealtimeEditing = false;
+
+        function openRealtimeBoard() {
+            const modal = document.getElementById('realtime-modal');
+            const display = document.getElementById('realtime-display');
+            const input = document.getElementById('realtime-input');
+            
+            const savedText = localStorage.getItem('realtime_announcement') || '目前沒有臨時公告喔！\n\n(請點擊右上角「編輯」開始輸入)';
+            display.innerText = savedText;
+            input.value = savedText;
+            
+            isRealtimeEditing = false;
+            display.classList.remove('hidden');
+            input.classList.add('hidden');
+            document.getElementById('btn-edit-realtime').innerText = '編輯';
+            document.getElementById('btn-edit-realtime').className = "bg-white text-red-600 hover:bg-red-50 px-6 py-2 rounded-xl font-bold text-xl transition-colors shadow-sm";
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeRealtimeBoard() {
+            document.getElementById('realtime-modal').classList.add('hidden');
+            document.getElementById('realtime-modal').classList.remove('flex');
+        }
+
+        function toggleRealtimeEdit() {
+            const display = document.getElementById('realtime-display');
+            const input = document.getElementById('realtime-input');
+            const btn = document.getElementById('btn-edit-realtime');
+            
+            isRealtimeEditing = !isRealtimeEditing;
+            
+            if (isRealtimeEditing) {
+                display.classList.add('hidden');
+                input.classList.remove('hidden');
+                if (input.value.includes('目前沒有臨時公告喔！')) input.value = '';
+                input.focus();
+                btn.innerText = '💾 儲存並發布';
+                btn.className = "bg-teal-600 text-white hover:bg-teal-700 px-6 py-2 rounded-xl font-bold text-xl transition-colors shadow-sm border border-teal-500";
+            } else {
+                const newText = input.value;
+                localStorage.setItem('realtime_announcement', newText);
+                display.innerText = newText || '目前沒有臨時公告喔！\n\n(請點擊右上角「編輯」開始輸入)';
+                input.classList.add('hidden');
+                display.classList.remove('hidden');
+                btn.innerText = '編輯';
+                btn.className = "bg-white text-red-600 hover:bg-red-50 px-6 py-2 rounded-xl font-bold text-xl transition-colors shadow-sm";
+            }
+        }
+        // --- 🚨 即時公告看板功能 結束 ---
     </script>
 </body>
 </html>
