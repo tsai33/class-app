@@ -584,22 +584,49 @@
             });
         }
 
+        // --- 🎲 抽籤防重複功能 (30分鐘冷卻) 開始 ---
         function randomDraw() {
-            if (isMultiSelectMode) { alert("請先關閉多選模式才能抽籤喔！"); return; }
-            if (students.length === 0) return;
-            const btn = document.getElementById('btn-random-draw'); btn.disabled = true; btn.innerHTML = `<span class="text-xl">🎲</span> <span>抽籤中...</span>`;
-            let times = 0; const maxTimes = 15; 
-            const interval = setInterval(() => {
-                students.forEach(s => document.getElementById(`student-card-${s.id}`)?.classList.remove('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-xl'));
-                const rStudent = students[Math.floor(Math.random() * students.length)];
-                document.getElementById(`student-card-${rStudent.id}`)?.classList.add('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-xl');
-                times++;
-                if (times >= maxTimes) {
-                    clearInterval(interval); btn.disabled = false; btn.innerHTML = `<span class="text-xl">🎲</span> <span class="whitespace-nowrap">抽籤</span>`;
-                    setTimeout(() => { students.forEach(s => document.getElementById(`student-card-${s.id}`)?.classList.remove('ring-4', 'ring-yellow-400', 'scale-110', 'z-20', 'shadow-xl')); openModal(rStudent.id); }, 500); 
-                }
-            }, 100); 
+            // 確保有學生資料
+            if (typeof students === 'undefined' || students.length === 0) {
+                alert('目前沒有學生資料無法抽籤喔！');
+                return;
+            }
+
+            const now = Date.now();
+            const cooldownMs = 30 * 60 * 1000; // 30 分鐘轉換成毫秒
+
+            // 1. 從記憶體讀取抽籤紀錄，並清除超過 30 分鐘的舊紀錄
+            let drawnHistory = JSON.parse(localStorage.getItem('random_draw_history')) || [];
+            drawnHistory = drawnHistory.filter(record => (now - record.time) < cooldownMs);
+
+            // 2. 篩選出「目前還沒被抽過」的學生 (可抽籤池)
+            const drawnIds = drawnHistory.map(record => record.id);
+            let availableStudents = students.filter(s => !drawnIds.includes(s.id));
+
+            // 3. 防呆機制：如果全班都在 30 分鐘內被抽光了，就自動洗牌重來！
+            if (availableStudents.length === 0) {
+                alert('🎉 全班都已經被抽過一輪囉！現在重新洗牌！');
+                drawnHistory = []; // 清空紀錄
+                availableStudents = students; // 所有人重新加入抽籤池
+            }
+
+            // 4. 從可抽籤池中，隨機抽出一位幸運兒
+            const randomIndex = Math.floor(Math.random() * availableStudents.length);
+            const luckyStudent = availableStudents[randomIndex];
+
+            // 5. 將這次抽中的幸運兒加入紀錄，並存回記憶體
+            drawnHistory.push({ id: luckyStudent.id, time: now });
+            localStorage.setItem('random_draw_history', JSON.stringify(drawnHistory));
+
+            // 6. 顯示抽籤結果 (打開該學生的視窗)
+            // 💡 備註：如果你原本的打開視窗函數不叫 openModal，請把下面這行改成你原本的寫法
+            if (typeof openModal === 'function') {
+                openModal(luckyStudent.id);
+            } else {
+                alert(`🎲 抽中：${luckyStudent.name}`);
+            }
         }
+        // --- 🎲 抽籤防重複功能 (30分鐘冷卻) 結束 ---
 
         // ==========================================
         // 📢 公告牆
