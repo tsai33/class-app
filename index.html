@@ -878,29 +878,28 @@
             const numColumns = 3; 
             const chunkSize = Math.ceil(students.length / numColumns);
             
-            // 🌟 空間最大化 1：縮小欄與欄之間的間距 (gap-2 md:gap-3)
-            let html = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3 items-start pb-2 w-full">`;
+            // 🌟 將三大欄之間的間距稍微調大一點，配合整體放大的視覺比例
+            let html = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5 items-start pb-2 w-full">`;
 
             for (let c = 0; c < numColumns; c++) {
                 const chunk = students.slice(c * chunkSize, (c + 1) * chunkSize);
                 if (chunk.length === 0) continue;
 
-                // 🌟 空間最大化 2：確保外框 w-full 吃滿 1/3 的寬度，並稍微減少外框圓角
                 html += `
-                <div class="bg-white rounded-xl border border-purple-200 shadow-sm flex flex-col relative isolate min-w-0 overflow-hidden w-full">
+                <div class="bg-white rounded-2xl border border-purple-200 shadow-sm flex flex-col relative isolate min-w-0 overflow-hidden w-full">
                     
-                    <div class="overflow-x-auto w-full custom-scroll pb-1.5">
-                        <table class="w-full text-center border-collapse whitespace-nowrap text-sm">
+                    <div class="overflow-x-auto w-full custom-scroll pb-2">
+                        <table class="w-full text-center border-collapse whitespace-nowrap text-base md:text-lg">
                             <thead class="bg-purple-50 text-gray-800">
                                 <tr>
-                                    <th class="sticky left-0 z-20 bg-purple-100 border-b-2 border-r border-purple-200 p-1.5 md:p-2 min-w-[50px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">號碼</th>`;
+                                    <th class="sticky left-0 z-20 bg-purple-100 border-b-2 border-r border-purple-200 p-3 md:p-4 min-w-[70px] md:min-w-[80px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">號碼</th>`;
 
                 currentTrackingTasks.forEach((task, i) => {
                    const safeTask = task.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
                     html += `
-                                    <th class="border-b-2 border-purple-200 p-1.5 md:p-2 min-w-[90px] md:min-w-[110px]">
-                                        <div class="truncate max-w-[130px] mx-auto font-black text-purple-900" title="${safeTask}">${safeTask}</div>
-                                        <button onclick="batchSetTracking(${i}, '已交')" class="mt-1 text-xs bg-purple-600 text-white hover:bg-purple-700 px-1.5 py-1 rounded-lg transition-colors w-full font-bold shadow-sm">⚡ 全班</button>
+                                    <th class="border-b-2 border-purple-200 p-3 md:p-4 min-w-[140px] md:min-w-[160px]">
+                                        <div class="truncate max-w-[180px] mx-auto font-black text-purple-900" title="${safeTask}">${safeTask}</div>
+                                        <button onclick="batchSetTracking(${i}, '已交')" class="mt-2 text-sm md:text-base bg-purple-600 text-white hover:bg-purple-700 px-3 py-1.5 rounded-lg transition-colors w-full font-bold shadow-sm">⚡ 全班</button>
                                     </th>`;
                 });
 
@@ -912,14 +911,14 @@
 
                     html += `
                                 <tr class="hover:bg-orange-50 transition-colors group">
-                                    <td class="sticky left-0 z-10 bg-white border-r border-b border-gray-200 p-1.5 md:p-2 font-black text-gray-900 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-orange-50 transition-colors">${student.id}</td>`;
+                                    <td class="sticky left-0 z-10 bg-white border-r border-b border-gray-200 p-3 md:p-4 font-black text-gray-900 text-lg md:text-xl shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-orange-50 transition-colors">${student.id}</td>`;
 
                     currentTrackingTasks.forEach((task, i) => {
                         const status = student.homework[currentTrackingDate][task] || '缺交';
                         const colorClass = HW_COLORS[status];
                         html += `
-                                    <td class="p-1 border-b border-gray-200">
-                                        <button onclick="cycleTrackingStatus(${student.id}, ${i}, this)" class="w-full py-1.5 px-1 rounded-md text-xs md:text-sm font-black border transition-colors select-none active:scale-95 shadow-sm ${colorClass}">${status}</button>
+                                    <td class="p-2 md:p-3 border-b border-gray-200">
+                                        <button onclick="cycleTrackingStatus(${student.id}, ${i}, this)" class="w-full py-2 md:py-3 px-2 rounded-lg text-sm md:text-base font-black border transition-colors select-none active:scale-95 shadow-sm ${colorClass}">${status}</button>
                                     </td>`;
                     });
                     html += `   </tr>`;
