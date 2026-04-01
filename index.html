@@ -837,7 +837,7 @@
                                     <th class="sticky left-0 z-20 bg-purple-100 border-b-2 border-r border-purple-200 p-2 md:p-3 min-w-[50px] md:min-w-[60px]">號碼</th>`;
 
                 currentTrackingTasks.forEach((task, i) => {
-                    const safeTask = task.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                   const safeTask = task.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
                     html += `
                                     <th class="border-b-2 border-purple-200 p-2 md:p-3 min-w-[100px] md:min-w-[110px]">
                                         <div class="truncate max-w-[120px] mx-auto font-black text-purple-900" title="${safeTask}">${safeTask}</div>
@@ -1164,11 +1164,13 @@
         }
 
         // ==========================================
-        // ⏱️ 懸浮式課堂計時器邏輯
+        // ⏱️ 懸浮式課堂計時器邏輯 (防背景延遲 & 喚醒音效版)
         // ==========================================
         let timerInterval = null;
         let timerSeconds = 300; 
         let isTimerRunning = false;
+        let targetEndTime = 0; // 記錄絕對結束時間
+        let audioCtx = null;   // 全域音效引擎
 
         function updateTimerDisplay() {
             const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
@@ -1195,50 +1197,60 @@
             if (timerSeconds <= 0 && !isTimerRunning) { alert("請先增加時間喔！"); return; }
             const btn = document.getElementById('btn-timer-start');
             
+            // ⭐️ 關鍵：在使用者點擊按鈕的瞬間，合法初始化並喚醒音效引擎，避免被瀏覽器阻擋
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
             if (isTimerRunning) {
+                // 暫停：計算當下剩餘秒數並停止計時
                 clearInterval(timerInterval);
                 isTimerRunning = false;
+                timerSeconds = Math.ceil((targetEndTime - Date.now()) / 1000);
+                if(timerSeconds < 0) timerSeconds = 0;
                 btn.innerText = '繼續';
                 btn.classList.replace('bg-orange-500', 'bg-teal-500');
             } else {
+                // 開始：設定未來的絕對結束時間
                 isTimerRunning = true;
                 btn.innerText = '暫停';
                 btn.classList.replace('bg-teal-500', 'bg-orange-500');
                 
+                targetEndTime = Date.now() + (timerSeconds * 1000);
+                
+                // 改用 200 毫秒高頻檢查，確保畫面平滑且時間精準
                 timerInterval = setInterval(() => {
-                    timerSeconds--;
-                    updateTimerDisplay();
+                    const remainingMs = targetEndTime - Date.now();
+                    timerSeconds = Math.ceil(remainingMs / 1000);
+                    
                     if (timerSeconds <= 0) {
+                        timerSeconds = 0;
                         clearInterval(timerInterval);
                         isTimerRunning = false;
                         btn.innerText = '開始';
                         btn.classList.replace('bg-orange-500', 'bg-teal-500');
+                        updateTimerDisplay(); // 更新為 00:00
                         
-                        // 👇 加上這兩行來播放音效
-                        // 🎵 溫柔版：加了音量控制的柔和提示音
-                        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-                        // 1. 建立「音量控制器」(GainNode)，把音量調小到 50% (0.5)
+                        // 🎵 播放溫柔提示音
                         const gainNode = audioCtx.createGain();
-                        gainNode.gain.value = 0.5; // 👈 如果覺得還是太大聲，可以改成 0.1；太小聲可以改 0.5
+                        gainNode.gain.value = 0.5; 
                         gainNode.connect(audioCtx.destination);
 
-                        // 2. 建立聲音
                         const oscillator = audioCtx.createOscillator();
-                        oscillator.type = 'sine'; // 👈 改成 'sine' (正弦波)，這是最圓潤溫柔的聲音，像吹玻璃杯
-                        oscillator.frequency.value = 600; // 頻率調低一點，聽起來比較溫暖
-
+                        oscillator.type = 'sine'; 
+                        oscillator.frequency.value = 600; 
                         oscillator.connect(gainNode);
 
-                        // 3. 播放並設定 5 秒後溫柔地消失
                         oscillator.start();
-                        // 讓聲音像淡出一樣慢慢變小，才不會有突然切斷的「啵」聲
                         gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 5);
                         oscillator.stop(audioCtx.currentTime + 5);
-                        
-                        
+                    } else {
+                        updateTimerDisplay();
                     }
-                }, 1000);
+                }, 200);
             }
         }
 
