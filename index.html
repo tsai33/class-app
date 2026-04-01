@@ -1371,6 +1371,57 @@
         });
 
         // (原本的 addMusicSchedule 和 deleteMusicSchedule 保持不變即可)
+        // ==========================================
+        // 🎵 音樂點播 - 新增與刪除功能
+        // ==========================================
+        function addMusicSchedule() {
+            const dateInput = document.getElementById('music-date').value;
+            const numberInput = document.getElementById('music-number').value;
+
+            if (!dateInput || !numberInput) {
+                alert('請完整選擇日期與輸入座號喔！');
+                return;
+            }
+
+            // 建立新排程，使用 Date.now() 產生唯一的 id
+            const newSchedule = {
+                id: Date.now().toString(),
+                date: dateInput,
+                number: numberInput
+            };
+
+            // 加入排程陣列
+            musicSchedules.push(newSchedule);
+
+            // 將排程依照日期由近到遠排序
+            musicSchedules.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            // 存入瀏覽器記憶體
+            localStorage.setItem('class_music_schedules', JSON.stringify(musicSchedules));
+
+            // 重新渲染畫面
+            const list = document.getElementById('music-schedule-list');
+            if(list) {
+                renderMusicSchedule();
+            }
+
+            // 清空輸入框方便下次輸入
+            document.getElementById('music-date').value = '';
+            document.getElementById('music-number').value = '';
+        }
+
+        function deleteMusicSchedule(id) {
+            if (confirm('確定要刪除這筆音樂點播排程嗎？')) {
+                // 過濾掉被刪除的那個 id
+                musicSchedules = musicSchedules.filter(schedule => schedule.id !== id);
+                
+                // 更新記憶體
+                localStorage.setItem('class_music_schedules', JSON.stringify(musicSchedules));
+                
+                // 重新渲染畫面
+                renderMusicSchedule();
+            }
+        }
     </script>
 </body>
 </html>
