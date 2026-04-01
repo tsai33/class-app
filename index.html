@@ -874,37 +874,38 @@
                 return;
             }
 
-            // 🌟 核心改良：依據作業數量自動決定切割的表格數量，避免擠在一起
+            // 💡 智慧判斷：作業越多，顯示的直列越少，給予更多橫向滑動空間
             let numColumns = 3; 
             let gridColsClass = "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
             
-            if (currentTrackingTasks.length >= 7) {
-                numColumns = 1; // 作業超過 7 項，只顯示 1 個大表格方便左右滑動
+            if (currentTrackingTasks.length >= 6) {
+                numColumns = 1; // 作業很多時，全部排成 1 欄大表
                 gridColsClass = "grid-cols-1";
             } else if (currentTrackingTasks.length >= 4) {
-                numColumns = 2; // 作業超過 4 項，顯示 2 個表格
+                numColumns = 2; // 作業中等時，排成 2 欄
                 gridColsClass = "grid-cols-1 lg:grid-cols-2";
             }
 
             const chunkSize = Math.ceil(students.length / numColumns);
-            let html = `<div class="grid ${gridColsClass} gap-4 md:gap-6 items-start pb-2">`;
+            let html = `<div class="grid ${gridColsClass} gap-4 md:gap-6 items-start pb-2 w-full">`;
 
             for (let c = 0; c < numColumns; c++) {
                 const chunk = students.slice(c * chunkSize, (c + 1) * chunkSize);
                 if (chunk.length === 0) continue;
 
+                // 🚨 關鍵修復：加入 min-w-0 防止 Grid 版面被過寬的表格撐破
                 html += `
-                <div class="bg-white rounded-2xl border-2 border-purple-200 shadow-sm overflow-hidden flex flex-col relative isolate">
-                    <div class="overflow-x-auto pb-2 custom-scroll">
+                <div class="bg-white rounded-2xl border-2 border-purple-200 shadow-sm flex flex-col relative isolate min-w-0 overflow-hidden">
+                    <div class="overflow-x-auto w-full custom-scroll rounded-xl bg-white pb-1">
                         <table class="w-full text-center border-collapse whitespace-nowrap text-sm">
                             <thead class="bg-purple-50 text-gray-800">
                                 <tr>
-                                    <th class="sticky left-0 z-20 bg-purple-100 border-b-2 border-r border-purple-200 p-2 md:p-3 min-w-[50px] md:min-w-[60px] shadow-[1px_0_0_0_#d8b4fe]">號碼</th>`;
+                                    <th class="sticky left-0 z-20 bg-purple-100 border-b-2 border-r border-purple-200 p-2 md:p-3 min-w-[50px] md:min-w-[60px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">號碼</th>`;
 
                 currentTrackingTasks.forEach((task, i) => {
                    const safeTask = task.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
                     html += `
-                                    <th class="border-b-2 border-purple-200 p-2 md:p-3 min-w-[100px] md:min-w-[110px]">
+                                    <th class="border-b-2 border-purple-200 p-2 md:p-3 min-w-[100px] md:min-w-[120px]">
                                         <div class="truncate max-w-[120px] mx-auto font-black text-purple-900" title="${safeTask}">${safeTask}</div>
                                         <button onclick="batchSetTracking(${i}, '已交')" class="mt-1.5 text-xs bg-purple-600 text-white hover:bg-purple-700 px-2 py-1.5 rounded-lg transition-colors w-full font-bold shadow-sm">⚡ 全班已交</button>
                                     </th>`;
@@ -918,7 +919,7 @@
 
                     html += `
                                 <tr class="hover:bg-orange-50 transition-colors">
-                                    <td class="sticky left-0 z-10 bg-white border-r border-b border-gray-200 p-2 md:p-3 font-black text-gray-900 shadow-[1px_0_0_0_#e5e7eb]">${student.id}</td>`;
+                                    <td class="sticky left-0 z-10 bg-white border-r border-b border-gray-200 p-2 md:p-3 font-black text-gray-900 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-orange-50">${student.id}</td>`;
 
                     currentTrackingTasks.forEach((task, i) => {
                         const status = student.homework[currentTrackingDate][task] || '缺交';
@@ -931,17 +932,6 @@
             }
             html += `</div>`;
             container.innerHTML = html;
-        }
-        function cycleTrackingStatus(studentId, taskIndex, btnElement) {
-            const task = currentTrackingTasks[taskIndex];
-            const student = students.find(s => s.id === studentId);
-            let currentStatus = student.homework[currentTrackingDate][task] || '缺交';
-            let nextIndex = (HW_STATUSES.indexOf(currentStatus) + 1) % HW_STATUSES.length;
-            let newStatus = HW_STATUSES[nextIndex];
-            student.homework[currentTrackingDate][task] = newStatus;
-            saveDataToCloud();
-            btnElement.className = `w-full py-1.5 md:py-2 px-1 rounded-lg text-xs md:text-sm font-black border transition-colors select-none active:scale-95 shadow-sm ${HW_COLORS[newStatus]}`;
-            btnElement.innerText = newStatus;
         }
 
         function batchSetTracking(taskIndex, targetStatus) {
